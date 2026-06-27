@@ -12,9 +12,10 @@ composeUi = "1.11.3"
 composeMaterial3 = "1.4.0"
 
 # AndroidX
-activityCompose = "1.13.0"
 #noinspection GradleDependency
-coreKtx = "1.18.0"
+activityCompose = "1.10.1"
+#noinspection GradleDependency
+coreKtx = "1.16.0"
 #noinspection GradleDependency
 lifecycleRuntimeKtx = "2.10.0"
 
