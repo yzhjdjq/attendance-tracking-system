@@ -1,0 +1,59 @@
+[versions]
+
+# Android SDK
+
+# Kotlin
+
+# Android Gradle Plugin
+
+# Compose BOM and related libraries
+composeBom = "2026.06.00"
+composeUi = "1.11.3"
+composeMaterial3 = "1.4.0"
+
+# AndroidX
+activityCompose = "1.13.0"
+#noinspection GradleDependency
+coreKtx = "1.18.0"
+#noinspection GradleDependency
+lifecycleRuntimeKtx = "2.10.0"
+
+# Testing
+junit = "4.13.2"
+espressoCore = "3.7.0"
+testExtJunit = "1.3.0"
+
+# Google
+material = "1.14.0"
+
+[libraries]
+# Compose BOM (Bill of Materials) - manages versions of all Compose libraries
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+
+# Compose UI libraries
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "composeUi" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "composeUi" }
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
+
+# Compose Material3
+material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+
+# AndroidX
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "testExtJunit" }
+
+# Google
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+[bundles]
+
+[plugins]
