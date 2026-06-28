@@ -1,0 +1,23 @@
+{
+  "@@locale": "ru",
+
+  "appNameShort": "СУП",
+  "appName": "Система учета посещаемости",
+  "aboutApp": "О приложении",
+  "copyright": "© 2026 Nikita Yarovoi",
+
+  "@_MAIN_DRAWER": {},
+  "menu": "меню",
+  "home_page_title": "Главная",
+  "logout_action": "Выйти",
+
+  "@_LOGIN_PAGE": {},
+  "enter_login_message": "Введите логин",
+  "authorize_error_message": "Ошибка авторизации",
+  "authorize": "Авторизация",
+  "login": "Логин",
+  "@login": { "description": "Подпись текстового поля логина (имя пользователя / электронная почта)" },
+  "password": "Пароль",
+  "authorizeAction": "Войти",
+  "@authorizeAction": { "description": "Текст кнопки авторизации" }
+}
