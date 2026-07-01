@@ -1,4 +1,4 @@
-import 'package:ats/providers/providers.dart' show UserProvider, LoginPageProvider;
+import 'package:ats/providers/providers.dart' show UserProvider, LoginPageProvider, MarkVisitPageProvider;
 import 'package:ats/services/services.dart' show S, StorageService;
 import 'package:ats/widgets/widgets.dart' show AuthCheckerWidget;
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ void main() async {
   await StorageService.initialize();
   await UserProvider.initialize();
   await LoginPageProvider.initialize(userProvider: UserProvider.instance);
+  await MarkVisitPageProvider.initialize();
   runApp(const MyApp());
 }
 
@@ -21,14 +22,13 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider.instance),
         ChangeNotifierProvider(create: (context) => LoginPageProvider.instance),
+        ChangeNotifierProvider(create: (context) => MarkVisitPageProvider.instance),
       ],
       child: MaterialApp(
         locale: S.locale,
         supportedLocales: S.supportedLocales,
         localizationsDelegates: S.localizationDelegates,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
         home: const AuthCheckerWidget(),
       ),
     );

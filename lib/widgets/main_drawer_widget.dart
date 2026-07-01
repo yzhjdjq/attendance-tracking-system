@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ats/providers/providers.dart' show UserProvider;
 import 'package:ats/services/services.dart' show S;
-import 'package:ats/pages/pages.dart' show HomePage, LoginPage;
+import 'package:ats/pages/pages.dart' show HomePage, LoginPage, MarkVisitPage;
 
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({super.key});
+class MainDrawerWidget extends StatelessWidget {
+  const MainDrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,21 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           _buildDrawerItem(
+            icon: Icons.monitor_heart,
+            title: S.of(context).mark_visit_page_title,
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MarkVisitPage()),
+              );
+            },
+          ),
+          _buildDrawerItem(
             icon: Icons.logout,
             title: S.of(context).logout_action,
             onTap: () {
               context.read<UserProvider>().logout();
+              Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginPage()),

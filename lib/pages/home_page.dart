@@ -1,6 +1,6 @@
 import 'package:ats/services/services.dart' show BleMeshService, S, SendResult;
 import 'package:flutter/material.dart';
-import 'package:ats/widgets/widgets.dart' show MainDrawer;
+import 'package:ats/widgets/widgets.dart' show MainDrawerWidget;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(S.of(context).home_page_title),
         actions: <Widget>[],
       ),
-      drawer: const MainDrawer(),
+      drawer: const MainDrawerWidget(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

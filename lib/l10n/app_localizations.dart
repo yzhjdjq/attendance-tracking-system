@@ -130,6 +130,12 @@ abstract class AppLocalizations {
   /// **'Главная'**
   String get home_page_title;
 
+  /// No description provided for @mark_visit_page_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отметка посещения'**
+  String get mark_visit_page_title;
+
   /// No description provided for @logout_action.
   ///
   /// In ru, this message translates to:
@@ -171,6 +177,168 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Войти'**
   String get authorizeAction;
+
+  /// No description provided for @bluetooth_permissions_required.
+  ///
+  /// In ru, this message translates to:
+  /// **'Требуются разрешения Bluetooth'**
+  String get bluetooth_permissions_required;
+
+  /// No description provided for @poll_started.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начинаю опрос участников... (ретрансляция через mesh)'**
+  String get poll_started;
+
+  /// No description provided for @attendance_marked_mesh_sent.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отправляю отметку о посещаемости через mesh сеть'**
+  String get attendance_marked_mesh_sent;
+
+  /// No description provided for @mark_visit_request_permissions.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запросить разрешения'**
+  String get mark_visit_request_permissions;
+
+  /// No description provided for @mark_visit_direct_connections.
+  ///
+  /// In ru, this message translates to:
+  /// **'Прямые BLE подключения'**
+  String get mark_visit_direct_connections;
+
+  /// No description provided for @mark_visit_no_connections.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет активных подключений. Убедитесь, что Bluetooth и геолокация включены, а также есть активные клиенты рядом.'**
+  String get mark_visit_no_connections;
+
+  /// No description provided for @mark_visit_role_teacher.
+  ///
+  /// In ru, this message translates to:
+  /// **'Преподаватель'**
+  String get mark_visit_role_teacher;
+
+  /// No description provided for @mark_visit_role_student.
+  ///
+  /// In ru, this message translates to:
+  /// **'Студент'**
+  String get mark_visit_role_student;
+
+  /// No description provided for @mark_visit_role_selected.
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль'**
+  String get mark_visit_role_selected;
+
+  /// No description provided for @mark_visit_instruction_poll.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нажмите кнопку для начала опроса'**
+  String get mark_visit_instruction_poll;
+
+  /// No description provided for @mark_visit_instruction_attendance.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нажмите кнопку для отметки посещаемости'**
+  String get mark_visit_instruction_attendance;
+
+  /// No description provided for @mark_visit_start_poll.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начать опрос ({delay} сек)'**
+  String mark_visit_start_poll(Object delay);
+
+  /// No description provided for @mark_visit_mark_attendance.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отметиться'**
+  String get mark_visit_mark_attendance;
+
+  /// No description provided for @mark_visit_poll_active.
+  ///
+  /// In ru, this message translates to:
+  /// **'Опрос активен... Ожидание ответов'**
+  String get mark_visit_poll_active;
+
+  /// No description provided for @mark_visit_attended.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отметившиеся'**
+  String get mark_visit_attended;
+
+  /// No description provided for @mark_visit_connected_peers.
+  ///
+  /// In ru, this message translates to:
+  /// **'Соседи в сети'**
+  String get mark_visit_connected_peers;
+
+  /// No description provided for @mark_visit_log_events.
+  ///
+  /// In ru, this message translates to:
+  /// **'Лог событий'**
+  String get mark_visit_log_events;
+
+  /// No description provided for @mark_visit_my_peer_id.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ваш ID'**
+  String get mark_visit_my_peer_id;
+
+  /// No description provided for @mark_visit_clear_log.
+  ///
+  /// In ru, this message translates to:
+  /// **'Очистить лог'**
+  String get mark_visit_clear_log;
+
+  /// No description provided for @mark_visit_enable_auto_scroll_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Включить автопрокрутку'**
+  String get mark_visit_enable_auto_scroll_action;
+
+  /// No description provided for @mark_visit_disable_auto_scroll_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выключить автопрокрутку'**
+  String get mark_visit_disable_auto_scroll_action;
+
+  /// No description provided for @mark_visit_auto_scroll_enabled.
+  ///
+  /// In ru, this message translates to:
+  /// **'Автопрокрутка включена'**
+  String get mark_visit_auto_scroll_enabled;
+
+  /// No description provided for @mark_visit_auto_scroll_disabled.
+  ///
+  /// In ru, this message translates to:
+  /// **'Автопрокрутка выключена'**
+  String get mark_visit_auto_scroll_disabled;
+
+  /// No description provided for @mark_visit_log_empty.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет сообщений'**
+  String get mark_visit_log_empty;
+
+  /// No description provided for @mark_visit_log_cleared.
+  ///
+  /// In ru, this message translates to:
+  /// **'Лог очищен'**
+  String get mark_visit_log_cleared;
+
+  /// No description provided for @mark_visit_attendance_marked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отметка о посещаемости отправлена'**
+  String get mark_visit_attendance_marked;
+
+  /// No description provided for @mark_visit_poll_started.
+  ///
+  /// In ru, this message translates to:
+  /// **'Опрос участников начат (ретрансляция через mesh)'**
+  String get mark_visit_poll_started;
 }
 
 class _AppLocalizationsDelegate

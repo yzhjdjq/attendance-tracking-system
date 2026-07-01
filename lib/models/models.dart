@@ -1,1 +1,1 @@
-export 'user.dart' show User;
+export 'user.dart' show User, UserRole;
