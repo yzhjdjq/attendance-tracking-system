@@ -25,7 +25,7 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   static bool get isInitialized => SingletonMixin.isInitialized<UserProvider>();
 
   final UserRepository _userRepo = UserRepository();
-  static User _user = const User(isAuthenticated: false, username: null, accessToken: null);
+  static User _user = const User(isAuthenticated: false, username: null, accessToken: null, role: null);
 
   Future<void> _loadDataFromRepository() async {
     _user = await _userRepo.load(defaultValue: _user);
@@ -46,7 +46,7 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   }
 
   void logout() async {
-    _user = const User(isAuthenticated: false, username: null, accessToken: null);
+    _user = const User(isAuthenticated: false, username: null, accessToken: null, role: null);
     _saveDataToRepository();
   }
 }

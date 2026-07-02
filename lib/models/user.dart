@@ -9,14 +9,14 @@ class User {
   const User({this.isAuthenticated = false, this.username, this.accessToken, this.role = UserRole.student});
 
   Map<String, dynamic> toJson() {
-    return {'isAuthenticated': isAuthenticated, 'username': username, 'accessToken': accessToken, 'role': role};
+    return {'isAuthenticated': isAuthenticated, 'username': username, 'accessToken': accessToken, 'role': role?.name};
   }
 
   static User fromJson(Map<String, dynamic> json) {
     bool iIsAuthenticated = json['isAuthenticated'] ?? false;
     String? iUsername = json['username'];
     String? iAccessToken = json['accessToken'];
-    UserRole? iRole = json['role'];
+    UserRole? iRole = json['role'] ?? UserRole.values.firstWhere((ur) => ur.name == json['role'] as String);
 
     return User(isAuthenticated: iIsAuthenticated, username: iUsername, accessToken: iAccessToken, role: iRole);
   }
