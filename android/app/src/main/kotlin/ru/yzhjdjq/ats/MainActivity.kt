@@ -28,6 +28,6 @@ class MainActivity : FlutterActivity() {
     }
 
     fun performPlatformOperation(): String {
-        return testInterface.SendMessage().toString()
+        return testInterface.SendMessage().toChannelValue()
     }
 }

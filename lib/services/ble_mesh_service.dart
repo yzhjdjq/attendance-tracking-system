@@ -4,7 +4,14 @@ import 'package:flutter/services.dart' show MethodChannel, PlatformException, Mi
 enum SendResult {
   notImplemented,
   success,
-  error
+  error;
+
+  static SendResult fromChannelValue(String value) {
+    return SendResult.values.firstWhere(
+          (e) => e.name == value.toLowerCase(),
+      orElse: () => SendResult.notImplemented,
+    );
+  }
 }
 
 class BleMeshService {
@@ -13,7 +20,8 @@ class BleMeshService {
   static Future<SendResult> sendMessage() async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       try {
-        return await platform.invokeMethod('performPlatformOperation');
+        final result = await platform.invokeMethod('sendMessage');
+        return SendResult.fromChannelValue(result);
       } on PlatformException catch (e) {
         if (kDebugMode) {
           print("Ошибка при отправке сообщения: $e");

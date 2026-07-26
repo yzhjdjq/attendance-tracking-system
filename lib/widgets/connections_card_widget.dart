@@ -34,18 +34,13 @@ class ConnectionsCardWidget extends StatelessWidget {
               ],
             ),
             if (directConnectionsCount == 0)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: _borderRoundRadius * 3, top: 8.0),
-                    child: Text(
-                      S.of(context).mark_visit_no_connections,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: _borderRoundRadius * 3, top: 8.0),
+                child: Text(
+                  S.of(context).mark_visit_no_connections,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  textAlign: TextAlign.left,
+                ),
               ),
           ],
         ),

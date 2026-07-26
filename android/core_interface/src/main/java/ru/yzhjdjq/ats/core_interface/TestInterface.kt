@@ -6,7 +6,9 @@ enum class SendResult
 {
     NOT_IMPLEMENTED,
     SUCCESS,
-    ERROR
+    ERROR;
+
+    fun toChannelValue(): String = this.name.lowercase()
 }
 
 interface TestInterface {
