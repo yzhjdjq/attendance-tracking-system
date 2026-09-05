@@ -16,13 +16,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    BleMeshService.sendMessage().then((value) {
+    BleMeshService.isImplemented().then((value) {
       setState(() {
-        _tooltipText = switch (value) {
-          SendResult.notImplemented => 'Не реализовано',
-          SendResult.success => 'Успешно',
-          SendResult.error => 'Ошибка',
-        };
+        _tooltipText = value ? 'Mesh реализован' : 'Mesh не реализован';
       });
     });
   }
@@ -30,6 +26,12 @@ class _HomePageState extends State<HomePage> {
   void _incrementCounter() {
     setState(() {
       _counter++;
+    });
+
+    BleMeshService.isImplemented().then((value) {
+      setState(() {
+        _tooltipText = value ? 'Mesh реализован' : 'Mesh не реализован';
+      });
     });
   }
 

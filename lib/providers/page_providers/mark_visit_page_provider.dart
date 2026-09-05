@@ -1,4 +1,5 @@
 import 'package:ats/models/models.dart' show UserRole;
+import 'package:ats/services/services.dart' show BleMeshService, SendResult;
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
 
@@ -7,7 +8,7 @@ enum UserRoleViewModel {
   student;
 
   static UserRoleViewModel fromUserRole(UserRole role) {
-    if ( role == UserRole.teacher ) {
+    if (role == UserRole.teacher) {
       return UserRoleViewModel.teacher;
     }
 
@@ -15,9 +16,23 @@ enum UserRoleViewModel {
   }
 }
 
+enum SendResultViewModel {
+  notImplemented,
+  success,
+  error;
+
+  static SendResultViewModel fromSendResult(SendResult result) {
+    return switch (result) {
+      SendResult.notImplemented => SendResultViewModel.notImplemented,
+      SendResult.success => SendResultViewModel.success,
+      SendResult.error => SendResultViewModel.error,
+    };
+  }
+}
+
 class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
-  static MarkVisitPageProvider get instance
-    => SingletonMixin.getInstance<MarkVisitPageProvider>();
+  static MarkVisitPageProvider get instance =>
+      SingletonMixin.getInstance<MarkVisitPageProvider>();
 
   static Future<MarkVisitPageProvider> initialize() async {
     if (SingletonMixin.isInitialized<MarkVisitPageProvider>()) {
@@ -32,7 +47,8 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     SingletonMixin.registerInstance(this);
   }
 
-  static bool get isInitialized => SingletonMixin.isInitialized<MarkVisitPageProvider>();
+  static bool get isInitialized =>
+      SingletonMixin.isInitialized<MarkVisitPageProvider>();
 
   UserRoleViewModel _role = UserRoleViewModel.student;
   String _myPeerId = '';
@@ -134,5 +150,11 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       _logMessages = List<String>.from(data['logMessages'] as List);
     }
     notifyListeners();
+  }
+
+  Future<SendResultViewModel> sendMessage(String message) async {
+    return SendResultViewModel.fromSendResult(
+      await BleMeshService.sendMessage(),
+    );
   }
 }

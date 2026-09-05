@@ -16,7 +16,7 @@ class User {
     bool iIsAuthenticated = json['isAuthenticated'] ?? false;
     String? iUsername = json['username'];
     String? iAccessToken = json['accessToken'];
-    UserRole? iRole = json['role'] ?? UserRole.values.firstWhere((ur) => ur.name == json['role'] as String);
+    UserRole? iRole = json['role'] != null ? UserRole.values.firstWhere((ur) => ur.name == json['role'] as String) : null;
 
     return User(isAuthenticated: iIsAuthenticated, username: iUsername, accessToken: iAccessToken, role: iRole);
   }

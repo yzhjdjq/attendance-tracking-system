@@ -1,4 +1,6 @@
-import 'package:ats/providers/providers.dart' show MarkVisitPageProvider, UserRoleViewModel;
+import 'package:ats/providers/page_providers/mark_visit_page_provider.dart';
+import 'package:ats/providers/providers.dart'
+    show MarkVisitPageProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/widgets/widgets.dart'
     show
@@ -38,7 +40,11 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
     );
   }
 
-  Widget _buildBody(BuildContext context, MarkVisitPageProvider provider, dynamic uiState) {
+  Widget _buildBody(
+    BuildContext context,
+    MarkVisitPageProvider provider,
+    dynamic uiState,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableHeight = constraints.maxHeight;
@@ -46,7 +52,10 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
         return SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: availableHeight, maxHeight: availableHeight),
+            constraints: BoxConstraints(
+              minHeight: availableHeight,
+              maxHeight: availableHeight,
+            ),
             child: IntrinsicHeight(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,10 +76,14 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                             },
                           ),
 
-                        if (uiState.errorMessage != null) const SizedBox(height: 16),
+                        if (uiState.errorMessage != null)
+                          const SizedBox(height: 16),
 
                         // Счетчик прямых BLE подключений
-                        ConnectionsCardWidget(directConnectionsCount: uiState.directConnectionsCount),
+                        ConnectionsCardWidget(
+                          directConnectionsCount:
+                              uiState.directConnectionsCount,
+                        ),
 
                         const SizedBox(height: 16),
 
@@ -83,9 +96,13 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                               '${S.of(context).mark_visit_role_selected}: ${role == UserRoleViewModel.teacher ? S.of(context).mark_visit_role_teacher : S.of(context).mark_visit_role_student}',
                             );
                             if (role == UserRoleViewModel.teacher) {
-                              provider.addLog(S.of(context).mark_visit_instruction_poll);
+                              provider.addLog(
+                                S.of(context).mark_visit_instruction_poll,
+                              );
                             } else {
-                              provider.addLog(S.of(context).mark_visit_instruction_attendance);
+                              provider.addLog(
+                                S.of(context).mark_visit_instruction_attendance,
+                              );
                             }
                           },
                         ),
@@ -97,23 +114,35 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                           role: uiState.role,
                           isPollActive: uiState.isPollActive,
                           hasError: uiState.errorMessage != null,
-                          onPressed: () => _handlePrimaryButtonClick(context, provider),
+                          onPressed: () =>
+                              _handlePrimaryButtonClick(context, provider),
                         ),
 
                         // Статус опроса
-                        if (uiState.role == UserRoleViewModel.teacher && uiState.isPollActive)
+                        if (uiState.role == UserRoleViewModel.teacher &&
+                            uiState.isPollActive)
                           const SizedBox(height: 16),
-                        if (uiState.role == UserRoleViewModel.teacher && uiState.isPollActive) const _PollStatusCard(),
+                        if (uiState.role == UserRoleViewModel.teacher &&
+                            uiState.isPollActive)
+                          const _PollStatusCard(),
 
                         // Список отметившихся
-                        if (uiState.role == UserRoleViewModel.teacher && uiState.attendedStudents.isNotEmpty)
+                        if (uiState.role == UserRoleViewModel.teacher &&
+                            uiState.attendedStudents.isNotEmpty)
                           const SizedBox(height: 16),
-                        if (uiState.role == UserRoleViewModel.teacher && uiState.attendedStudents.isNotEmpty)
-                          AttendedStudentsCardWidget(students: uiState.attendedStudents),
+                        if (uiState.role == UserRoleViewModel.teacher &&
+                            uiState.attendedStudents.isNotEmpty)
+                          AttendedStudentsCardWidget(
+                            students: uiState.attendedStudents,
+                          ),
 
                         // Информация о подключениях
-                        if (uiState.connectedPeers.isNotEmpty) const SizedBox(height: 16),
-                        if (uiState.connectedPeers.isNotEmpty) ConnectedPeersCardWidget(peers: uiState.connectedPeers),
+                        if (uiState.connectedPeers.isNotEmpty)
+                          const SizedBox(height: 16),
+                        if (uiState.connectedPeers.isNotEmpty)
+                          ConnectedPeersCardWidget(
+                            peers: uiState.connectedPeers,
+                          ),
 
                         const SizedBox(height: 16),
                       ],
@@ -129,12 +158,16 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         autoScrollLog: uiState.autoScrollLog,
                         onClearLog: () {
                           provider.clearLogs();
-                          provider.addLog('🗑️ ${S.of(context).mark_visit_log_cleared}');
+                          provider.addLog(
+                            '🗑️ ${S.of(context).mark_visit_log_cleared}',
+                          );
                         },
                         onToggleAutoScroll: () {
                           provider.setAutoScrollLog(!uiState.autoScrollLog);
                           provider.addLog(
-                            uiState.autoScrollLog ? '📌 ${S.of(context).mark_visit_auto_scroll_enabled}' : '📌 ${S.of(context).mark_visit_auto_scroll_disabled}',
+                            uiState.autoScrollLog
+                                ? '📌 ${S.of(context).mark_visit_auto_scroll_enabled}'
+                                : '📌 ${S.of(context).mark_visit_auto_scroll_disabled}',
                           );
                         },
                       ),
@@ -159,9 +192,14 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
     );
   }
 
-  Future<void> _handlePrimaryButtonClick(BuildContext context, MarkVisitPageProvider provider) async {
+  Future<void> _handlePrimaryButtonClick(
+    BuildContext context,
+    MarkVisitPageProvider provider,
+  ) async {
     if (provider.errorMessage != null) {
-      provider.setError('${S.of(context).bluetooth_permissions_required}: ${provider.errorMessage}');
+      provider.setError(
+        '${S.of(context).bluetooth_permissions_required}: ${provider.errorMessage}',
+      );
       return;
     }
 
@@ -170,6 +208,18 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
     } else {
       provider.addLog('📤 ${S.of(context).attendance_marked_mesh_sent}...');
     }
+
+    provider
+        .sendMessage('test')
+        .then(
+          (value) => {
+            provider.addLog(switch (value) {
+              SendResultViewModel.notImplemented => 'Не реализовано',
+              SendResultViewModel.success => 'Успешно',
+              SendResultViewModel.error => 'Ошибка',
+            }),
+          },
+        );
   }
 }
 
