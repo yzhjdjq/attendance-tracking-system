@@ -1,17 +1,48 @@
-# ats
+<p align="center">
+	<img src="web/icons/Icon-512.png" width="35%" height="35%" style="border-radius:50%;"/><br>
+</p>
+<br>
 
-A system for tracking student attendance with support for the BLE Mesh network
+# Attendance Tracking System (ATS)
 
-## Getting Started
+Система учета посещаемости студентов (СУП) с поддержкой передачи данных по 
+локальной сети, организуемой поверх Bluetooth Low Energy (BLE) на устройствах
+Android. Алгоритм построения канала между конечными узлами основан на 
+широковещательном обмене пакетами между всеми узлами в сети.
 
-This project is a starting point for a Flutter application.
+### Как разрабатывать
 
-A few resources to get you started if this is your first Flutter project:
+Проект использует Method Channel для связи Dart и Kotlin. Реализация BLE 
+находится в платформенном коде Android в модуле `core`. Наименования классов, 
+файлов и других сущностей отталкивается от `Mesh` приставки. Сам `core` модуль
+является динамической на уровне сборки android-библиотекой. Исходный код 
+находится в репозиторий-подмодуль.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+##### Сборка проекта без `core`-модуля под Android
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Необходимо вытянуть текущий репозиторий на локальную машину.
+- Зайти в папку `android` и удалить папку `core` (она будет пустой, если не
+был вытянут репозиторий-подмодуль).
+- Запустить сборку проекта как обычно.
+
+##### Сборка проекта с полной функциональностью под Android
+
+- Необходимо вытянуть текущий репозиторий на локальную машину.
+- Получить исходный код `core`-модуля через git систему или в виде архива.
+- Зайти в папку `android` и удостовериться, что в папке `core` находится
+актуальная версия `core`-модуля из git-репозитория или архива.
+- Запустить сборку проекта как обычно.
+
+##### Сборка проекта под другие платформы (web/desktop/...)
+
+Сборка под другие платформы не отличается от обычного процесса сборки.
+
+#### Особенности разработки
+
+В проект начинал разрабатываться под Flutter версии __3.44.*__.
+
+При разработке желательно не обновлять версии flutter-библиотек, а конфликты 
+версий решать в пользу ранее установленных версий. Например, в pubspec уже 
+есть библиотека `a` версии 1.0.0, а установка библиотеки `b` версии 2.0.0 
+приведет к запросу новой версии `a`: 2.1.1. В этом случае необходимо понизить 
+версию `b` до 1.0.0 или любой другой, пока зависимости не будут разрешены.
