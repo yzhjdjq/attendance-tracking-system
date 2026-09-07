@@ -21,6 +21,8 @@ android {
         release {
             isMinifyEnabled = false
         }
+        create("profile") {
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
