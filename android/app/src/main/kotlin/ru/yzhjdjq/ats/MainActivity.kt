@@ -55,7 +55,9 @@ class MainActivity : FlutterActivity() {
 
         try {
             val serviceClass = Class.forName("ru.yzhjdjq.ats.core.mesh.MeshForegroundService")
-            val intent = Intent(this, serviceClass)
+            val intent = Intent(this, serviceClass).apply {
+                action = "START"
+            }
             startForegroundService(intent)
             Log.d(TAG, "MeshForegroundService started")
         } catch (e: ClassNotFoundException) {
