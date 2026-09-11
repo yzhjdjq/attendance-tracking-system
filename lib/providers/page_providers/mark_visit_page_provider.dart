@@ -1,4 +1,5 @@
 import 'package:ats/models/models.dart' show UserRole;
+import 'package:ats/providers/service_providers/ble_mesh_service_provider.dart';
 import 'package:ats/services/services.dart' show BleMeshService, SendResult;
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
@@ -34,63 +35,50 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   static MarkVisitPageProvider get instance =>
       SingletonMixin.getInstance<MarkVisitPageProvider>();
 
-  static Future<MarkVisitPageProvider> initialize() async {
+  static Future<MarkVisitPageProvider> initialize({required BleMeshServiceProvider bleMeshServiceProvider}) async {
     if (SingletonMixin.isInitialized<MarkVisitPageProvider>()) {
       return instance;
     }
 
-    final provider = MarkVisitPageProvider._internal();
+    final provider = MarkVisitPageProvider._internal(bleMeshServiceProvider);
     return provider;
   }
 
-  MarkVisitPageProvider._internal() {
+  MarkVisitPageProvider._internal(this._bleMeshServiceProvider) {
     SingletonMixin.registerInstance(this);
+    subscribeToReceiveMessage();
   }
 
   static bool get isInitialized =>
       SingletonMixin.isInitialized<MarkVisitPageProvider>();
 
+  late final BleMeshServiceProvider _bleMeshServiceProvider;
+
   UserRoleViewModel _role = UserRoleViewModel.student;
-  String _myPeerId = '';
   List<String> _logMessages = [];
-  List<String> _connectedPeers = [];
   List<String> _attendedStudents = [];
   bool _isPollActive = false;
-  int _directConnectionsCount = 0;
   String? _errorMessage;
   bool _autoScrollLog = true;
 
   UserRoleViewModel get role => _role;
-  String get myPeerId => _myPeerId;
   List<String> get logMessages => _logMessages;
-  List<String> get connectedPeers => _connectedPeers;
   List<String> get attendedStudents => _attendedStudents;
   bool get isPollActive => _isPollActive;
-  int get directConnectionsCount => _directConnectionsCount;
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
+  String get userId => _bleMeshServiceProvider.userId;
+  Future<int> getDirectConnectionsCount() async=> await _bleMeshServiceProvider.getDirectConnectionsCount();
+
+  void subscribeToReceiveMessage() {
+    _bleMeshServiceProvider.messages.listen((message) {
+      _logMessages.add(message);
+      notifyListeners();
+    });
+  }
 
   void setRole(UserRoleViewModel role) {
     _role = role;
-    notifyListeners();
-  }
-
-  void setMyPeerId(String peerId) {
-    _myPeerId = peerId;
-    addLog('✅ Mesh сервис подключен, ID: $peerId');
-    notifyListeners();
-  }
-
-  void setConnectedPeers(List<String> peers) {
-    _connectedPeers = peers;
-    if (peers.isNotEmpty) {
-      addLog('👥 Обнаружено ${peers.length} устройств');
-    }
-    notifyListeners();
-  }
-
-  void setDirectConnectionsCount(int count) {
-    _directConnectionsCount = count;
     notifyListeners();
   }
 
@@ -130,31 +118,9 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     notifyListeners();
   }
 
-  void updateFromService(Map<String, dynamic> data) {
-    if (data.containsKey('myPeerId')) {
-      _myPeerId = data['myPeerId'] as String;
-    }
-    if (data.containsKey('connectedPeers')) {
-      _connectedPeers = List<String>.from(data['connectedPeers'] as List);
-    }
-    if (data.containsKey('directConnectionsCount')) {
-      _directConnectionsCount = data['directConnectionsCount'] as int;
-    }
-    if (data.containsKey('attendedStudents')) {
-      _attendedStudents = List<String>.from(data['attendedStudents'] as List);
-    }
-    if (data.containsKey('isPollActive')) {
-      _isPollActive = data['isPollActive'] as bool;
-    }
-    if (data.containsKey('logMessages')) {
-      _logMessages = List<String>.from(data['logMessages'] as List);
-    }
-    notifyListeners();
-  }
-
   Future<SendResultViewModel> sendMessage(String message) async {
     return SendResultViewModel.fromSendResult(
-      await BleMeshService.sendMessage(),
+      await BleMeshService.sendMessage(message),
     );
   }
 }

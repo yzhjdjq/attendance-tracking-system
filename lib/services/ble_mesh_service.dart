@@ -1,9 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart'
     show kDebugMode, kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/services.dart'
-    show MethodChannel, PlatformException, MissingPluginException;
+    show MethodChannel, PlatformException, MissingPluginException, EventChannel;
 
 import 'package:ats/models/models.dart' show Message;
 
@@ -64,10 +62,25 @@ enum SendResult {
 }
 
 class BleMeshService {
-  static const platform = MethodChannel('ru.yzhjdjq.ats.platform_methods');
+  static const platformMethods = MethodChannel('ru.yzhjdjq.ats.platform_methods');
+  static const platformMethodsInit = MethodChannel('ru.yzhjdjq.ats.platform_methods/init');
+  static const EventChannel _eventChannelReceiveMessage = EventChannel('ru.yzhjdjq.ats.platform_events/receive_message');
+  static Stream<dynamic>? _eventStream;
 
   static final bool _isAndroid =
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  static Stream<dynamic> get events {
+    if (!_isAndroid) {
+      if (kDebugMode) {
+        print('Subscription to listen to received messages skipped: Not Android platform');
+      }
+      return Stream.empty();
+    }
+
+    _eventStream ??= _eventChannelReceiveMessage.receiveBroadcastStream();
+    return _eventStream!;
+  }
 
   static Future<T?> _invokeMethod<T>(
     String method, {
@@ -89,8 +102,8 @@ class BleMeshService {
 
     try {
       final result = args != null
-          ? await platform.invokeMethod<T>(method, args)
-          : await platform.invokeMethod<T>(method);
+          ? await platformMethods.invokeMethod<T>(method, args)
+          : await platformMethods.invokeMethod<T>(method);
       return onSuccess?.call(result) ?? result;
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -112,16 +125,46 @@ class BleMeshService {
 
   static Future<bool> isImplemented() async {
     return await _invokeMethod<bool>(
-          'isImplemented',
-          onDefaultErrorResult: () => false,
-        ) ??
-        false;
+      'isImplemented',
+      onDefaultErrorResult: () => false,
+    ) ?? false;
+  }
+
+  static Future<void> initMeshService(String userId) async {
+    if (!_isAndroid) {
+      if (kDebugMode) {
+        print('Method init skipped: Not Android platform');
+      }
+    }
+
+    try {
+      await platformMethodsInit.invokeMethod<void>('init', userId);
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('PlatformException in init: ${e.message}');
+      }
+    } on MissingPluginException catch (e) {
+      if (kDebugMode) {
+        print('MissingPluginException in init: ${e.message}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown error in init: $e');
+      }
+    }
+  }
+
+  static Future<void> setUserId(String? userId) async {
+    await _invokeMethod<void>(
+      'setUserId',
+      args: userId ?? 'empty',
+    );
   }
 
   static Future<List<PermissionInfo>> getPermissionsState() async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       try {
-        final result = await platform.invokeMethod<Map<dynamic, dynamic>>(
+        final result = await platformMethods.invokeMethod<Map<dynamic, dynamic>>(
           'getPermissionsState',
         );
         if (result == null) {
@@ -154,27 +197,20 @@ class BleMeshService {
     return [];
   }
 
-  static Future<SendResult> sendMessage() async {
-    return SendResult.fromChannelValue(
-      await _invokeMethod<String?>(
-            'sendMessage',
-            onDefaultErrorResult: () => SendResult.notImplemented.name,
-          ) ??
-          SendResult.notImplemented.name,
-    );
+  static Future<int> getNumberOfNetworkMembers() async {
+    return await _invokeMethod<int>(
+      'getNumberOfNetworkMembers',
+      onDefaultErrorResult: () => 0,
+    ) ?? 0;
   }
 
-  static Future<SendResult> sendMessageWithPayload(
-    // String recipientId,
-    // Uint8List bytes,
-  ) async {
+  static Future<SendResult> sendMessage(String message) async {
     return SendResult.fromChannelValue(
       await _invokeMethod<String?>(
-            'sendRawBytes',
-            args: Message(len: 3, recipientId: 'recipientId', payload: Uint8List.fromList([0x123456])).toJson(),
-            onDefaultErrorResult: () => SendResult.notImplemented.name,
-          ) ??
-          SendResult.notImplemented.name,
+        'sendMessage',
+        args: message,
+        onDefaultErrorResult: () => SendResult.notImplemented.name,
+      ) ?? SendResult.notImplemented.name,
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:ats/services/services.dart' show BleMeshService, S, SendResult;
+import 'package:ats/services/services.dart' show BleMeshService, S;
 import 'package:flutter/material.dart';
 import 'package:ats/widgets/widgets.dart' show MainDrawerWidget;
 

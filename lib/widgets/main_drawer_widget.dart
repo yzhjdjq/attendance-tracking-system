@@ -13,7 +13,7 @@ class MainDrawerWidget extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          _MainDrawerHeader(context),
+          const _MainDrawerHeader(),
           _buildDrawerItem(
             icon: Icons.home,
             title: S.of(context).home_page_title,
@@ -62,13 +62,14 @@ class MainDrawerWidget extends StatelessWidget {
 }
 
 class _MainDrawerHeader extends StatelessWidget {
-  final BuildContext context;
 
-  const _MainDrawerHeader(this.context);
+  const _MainDrawerHeader();
 
   @override
   Widget build(BuildContext context) {
-    return DrawerHeader(
+    return  SizedBox(
+        height: 180,
+        child:DrawerHeader(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
       ),
@@ -104,6 +105,7 @@ class _MainDrawerHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

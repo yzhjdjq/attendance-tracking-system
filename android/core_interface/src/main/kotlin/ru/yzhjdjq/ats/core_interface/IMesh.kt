@@ -49,39 +49,56 @@ interface IMesh {
     fun isImplemented(): Boolean
 
     /**
+     * Устанавливает идентификатор пользователя
+     *
+     * @param userId идентификатор пользователя
+     */
+    fun setUserId(userId: String)
+
+    /**
+     * Устанавливает callback для передачи полученных сообщений на frontend
+     *
+     * @param callback функция, принимающая полученное сообщение в String формате
+     */
+    fun setCallbackReceiveMessage(callback: (String) -> Unit)
+
+    /**
      * Возвращает список PermissionStatus, описывая все необходимые разрешения
      */
     fun getPermissionsState(): List<PermissionStatus>
 
     /**
+     * Возвращает количество участников сети
+     *
+     * На текущий момент возвращает количество BLE соединений
+     * вместо количества соединений с другими userId-узлами.
+     */
+    fun getNumberOfNetworkMembers(): Int
+
+    /**
      * Отправляет сообщение по BLE Mesh каналу
      */
-    fun sendMessage(): SendResult
+    fun sendMessage(message: String): SendResult
 }
 
 class StubMesh : IMesh {
     override fun isImplemented(): Boolean = false
+    override fun setUserId(userId: String): Unit = Unit
+    override fun setCallbackReceiveMessage(callback: (String) -> Unit): Unit = Unit
     override fun getPermissionsState(): List<PermissionStatus> =
         listOf(PermissionStatus(name = Permissions.NOT_IMPLEMENTED, granted = false, required = false))
-    override fun sendMessage(): SendResult = SendResult.NOT_IMPLEMENTED
+    override fun getNumberOfNetworkMembers(): Int = 0
+    override fun sendMessage(message: String): SendResult = SendResult.NOT_IMPLEMENTED
 }
 
 object MeshFactory {
     private var TAG: String = "MeshFactory"
     private var instance: IMesh? = null
 
-    fun setInstance(mesh: IMesh) {
-        instance = mesh
-    }
-
-    fun resetInstance() {
-        instance = null
-    }
-
     fun create(): IMesh {
         instance?.let { return it }
 
-        return try {
+        instance = try {
             Log.d(TAG, "Loading implementation...")
             val clazz = Class.forName("ru.yzhjdjq.ats.core.Mesh")
             Log.d(TAG, "Found class: ${clazz.name}")
@@ -93,13 +110,15 @@ object MeshFactory {
             Log.e(TAG, "Error loading implementation, using stub", e)
             StubMesh()
         }
+
+        return instance!!
     }
 
     fun hasImplementation(): Boolean {
         return try {
             Class.forName("ru.yzhjdjq.ats.core.Mesh")
             true
-        } catch (e: ClassNotFoundException) {
+        } catch (_: ClassNotFoundException) {
             false
         }
     }

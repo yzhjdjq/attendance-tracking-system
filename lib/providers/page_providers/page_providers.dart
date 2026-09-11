@@ -1,3 +1,3 @@
 export 'login_page_provider.dart' show LoginPageProvider;
 
-export 'mark_visit_page_provider.dart' show MarkVisitPageProvider, UserRoleViewModel;
+export 'mark_visit_page_provider.dart' show MarkVisitPageProvider, SendResultViewModel, UserRoleViewModel;

@@ -1,6 +1,5 @@
-import 'package:ats/providers/page_providers/mark_visit_page_provider.dart';
 import 'package:ats/providers/providers.dart'
-    show MarkVisitPageProvider, UserRoleViewModel;
+    show MarkVisitPageProvider, SendResultViewModel, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/widgets/widgets.dart'
     show
@@ -80,9 +79,16 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                           const SizedBox(height: 16),
 
                         // Счетчик прямых BLE подключений
-                        ConnectionsCardWidget(
-                          directConnectionsCount:
-                              uiState.directConnectionsCount,
+                        FutureBuilder(
+                          future: provider.getDirectConnectionsCount(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            return ConnectionsCardWidget(
+                              directConnectionsCount: snapshot.hasData ? snapshot.data! : 0,
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 16),
@@ -137,12 +143,12 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                           ),
 
                         // Информация о подключениях
-                        if (uiState.connectedPeers.isNotEmpty)
-                          const SizedBox(height: 16),
-                        if (uiState.connectedPeers.isNotEmpty)
-                          ConnectedPeersCardWidget(
-                            peers: uiState.connectedPeers,
-                          ),
+                        // if (uiState.connectedPeers.isNotEmpty)
+                        //   const SizedBox(height: 16),
+                        // if (uiState.connectedPeers.isNotEmpty)
+                        //   ConnectedPeersCardWidget(
+                        //     peers: uiState.connectedPeers,
+                        //   ),
 
                         const SizedBox(height: 16),
                       ],
@@ -178,7 +184,7 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      '🆔 ${S.of(context).mark_visit_my_peer_id}: ${uiState.myPeerId}',
+                      '🆔 ${S.of(context).mark_visit_my_peer_id}: ${provider.userId}',
                       style: Theme.of(context).textTheme.bodySmall,
                       textAlign: TextAlign.center,
                     ),
@@ -210,7 +216,7 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
     }
 
     provider
-        .sendMessage('test')
+        .sendMessage('HELLO')
         .then(
           (value) => {
             provider.addLog(switch (value) {
