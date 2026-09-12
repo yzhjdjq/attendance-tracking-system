@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
-import 'package:ats/providers/model_providers/model_providers.dart' show UserProvider;
+import 'package:ats/providers/model_providers/model_providers.dart'
+    show UserProvider;
 
 class LoginPageProvider with ChangeNotifier, SingletonMixin {
   static LoginPageProvider get instance {
     return SingletonMixin.getInstance<LoginPageProvider>();
   }
 
-  static Future<LoginPageProvider> initialize({required UserProvider userProvider}) async {
+  static Future<LoginPageProvider> initialize({
+    required UserProvider userProvider,
+  }) async {
     if (SingletonMixin.isInitialized<LoginPageProvider>()) {
       return instance;
     }
@@ -22,7 +25,8 @@ class LoginPageProvider with ChangeNotifier, SingletonMixin {
     _userProvider.addListener(notify);
   }
 
-  static bool get isInitialized => SingletonMixin.isInitialized<LoginPageProvider>();
+  static bool get isInitialized =>
+      SingletonMixin.isInitialized<LoginPageProvider>();
 
   late final UserProvider _userProvider;
 

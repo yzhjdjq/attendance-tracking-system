@@ -42,7 +42,9 @@ class _LogCardWidgetState extends State<LogCardWidget> {
     }
 
     // Если автопрокрутку только что включили - прокрутить в конец
-    if (widget.autoScrollLog && !_wasAutoScrollEnabled && _scrollController.hasClients) {
+    if (widget.autoScrollLog &&
+        !_wasAutoScrollEnabled &&
+        _scrollController.hasClients) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -72,17 +74,30 @@ class _LogCardWidgetState extends State<LogCardWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('📱 ${S.of(context).mark_visit_log_events}', style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  '📱 ${S.of(context).mark_visit_log_events}',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Кнопка переключения автопрокрутки
                     IconButton(
-                      icon: Icon(widget.autoScrollLog ? Icons.lock_open : Icons.lock_outline, size: 18),
-                      tooltip: widget.autoScrollLog ? S.of(context).mark_visit_disable_auto_scroll_action : S.of(context).mark_visit_enable_auto_scroll_action,
+                      icon: Icon(
+                        widget.autoScrollLog
+                            ? Icons.lock_open
+                            : Icons.lock_outline,
+                        size: 18,
+                      ),
+                      tooltip: widget.autoScrollLog
+                          ? S.of(context).mark_visit_disable_auto_scroll_action
+                          : S.of(context).mark_visit_enable_auto_scroll_action,
                       onPressed: widget.onToggleAutoScroll,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
                       style: IconButton.styleFrom(
                         foregroundColor: widget.autoScrollLog
                             ? Theme.of(context).colorScheme.primary
@@ -94,18 +109,26 @@ class _LogCardWidgetState extends State<LogCardWidget> {
                     IconButton(
                       icon: const Icon(Icons.delete_outline, size: 18),
                       tooltip: S.of(context).mark_visit_clear_log,
-                      onPressed: widget.logMessages.isNotEmpty ? widget.onClearLog : null,
+                      onPressed: widget.logMessages.isNotEmpty
+                          ? widget.onClearLog
+                          : null,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
                     ),
                     if (widget.logMessages.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: Text(
                           '${widget.logMessages.length}',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ),
                   ],
@@ -121,9 +144,9 @@ class _LogCardWidgetState extends State<LogCardWidget> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         S.of(context).mark_visit_log_empty,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   )
@@ -134,8 +157,14 @@ class _LogCardWidgetState extends State<LogCardWidget> {
                     itemBuilder: (context, index) {
                       final log = widget.logMessages[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                        child: Text(log, style: Theme.of(context).textTheme.bodySmall),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4.0,
+                          vertical: 2.0,
+                        ),
+                        child: Text(
+                          log,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       );
                     },
                   ),

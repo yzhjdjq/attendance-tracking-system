@@ -33,11 +33,11 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       body: Consumer<MarkVisitPageProvider>(
         builder: (context, provider, child) {
           if (!provider.isMeshServiceRunning()) {
-          return _ServiceStoppedView(
-            onRestart: () => provider.startService(),
-          );
-        }
-        return _buildBody(context, provider, provider);
+            return _ServiceStoppedView(
+              onRestart: () => provider.startService(),
+            );
+          }
+          return _buildBody(context, provider, provider);
         },
       ),
     );
@@ -86,11 +86,14 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         FutureBuilder(
                           future: provider.getDirectConnectionsCount(),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return CircularProgressIndicator();
                             }
                             return ConnectionsCardWidget(
-                              directConnectionsCount: snapshot.hasData ? snapshot.data! : 0,
+                              directConnectionsCount: snapshot.hasData
+                                  ? snapshot.data!
+                                  : 0,
                             );
                           },
                         ),
@@ -153,7 +156,6 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         //   ConnectedPeersCardWidget(
                         //     peers: uiState.connectedPeers,
                         //   ),
-
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -274,7 +276,9 @@ class _ServiceStoppedView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRestart,
               icon: const Icon(Icons.refresh),
-              label: Text('Запустить сервис'), //S.of(context).mark_visit_restart_service),
+              label: Text(
+                'Запустить сервис',
+              ), //S.of(context).mark_visit_restart_service),
             ),
           ],
         ),

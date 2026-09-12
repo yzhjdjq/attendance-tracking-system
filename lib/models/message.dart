@@ -5,10 +5,18 @@ class Message {
   final String recipientId;
   final Uint8List payload;
 
-  const Message({required this.len, required this.recipientId, required this.payload});
+  const Message({
+    required this.len,
+    required this.recipientId,
+    required this.payload,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'len': len, 'recipientId': recipientId, 'payload': payload.toList()};
+    return {
+      'len': len,
+      'recipientId': recipientId,
+      'payload': payload.toList(),
+    };
   }
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -30,11 +38,11 @@ class Message {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Message &&
-              runtimeType == other.runtimeType &&
-              len == other.len &&
-              recipientId == other.recipientId &&
-              payload == other.payload;
+      other is Message &&
+          runtimeType == other.runtimeType &&
+          len == other.len &&
+          recipientId == other.recipientId &&
+          payload == other.payload;
 
   @override
   int get hashCode => Object.hash(len, recipientId, payload);

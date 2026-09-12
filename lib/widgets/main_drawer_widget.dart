@@ -52,60 +52,57 @@ class MainDrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawerItem({required IconData icon, required String title, VoidCallback? onTap}) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(leading: Icon(icon), title: Text(title), onTap: onTap);
   }
 }
 
 class _MainDrawerHeader extends StatelessWidget {
-
   const _MainDrawerHeader();
 
   @override
   Widget build(BuildContext context) {
-    return  SizedBox(
-        height: 180,
-        child:DrawerHeader(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-            radius: 30,
-            child: Text(
-              S.of(context).appNameShort,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSecondaryContainer,
+    return SizedBox(
+      height: 180,
+      child: DrawerHeader(
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              radius: 30,
+              child: Text(
+                S.of(context).appNameShort,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            S.of(context).appName,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 10),
+            Text(
+              S.of(context).appName,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            'version code',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
+            const SizedBox(height: 5),
+            Text(
+              'version code',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

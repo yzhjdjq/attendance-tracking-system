@@ -9,7 +9,9 @@ class UserProvider with ChangeNotifier, SingletonMixin {
     return SingletonMixin.getInstance<UserProvider>();
   }
 
-  static Future<UserProvider> initialize({required BleMeshServiceProvider bleMeshServiceProvider}) async {
+  static Future<UserProvider> initialize({
+    required BleMeshServiceProvider bleMeshServiceProvider,
+  }) async {
     if (SingletonMixin.isInitialized<UserProvider>()) {
       return instance;
     }
@@ -27,7 +29,12 @@ class UserProvider with ChangeNotifier, SingletonMixin {
 
   late final BleMeshServiceProvider _bleMeshServiceProvider;
   final UserRepository _userRepo = UserRepository();
-  static User _user = const User(isAuthenticated: false, username: null, accessToken: null, role: null);
+  static User _user = const User(
+    isAuthenticated: false,
+    username: null,
+    accessToken: null,
+    role: null,
+  );
 
   Future<void> _loadDataFromRepository() async {
     _user = await _userRepo.load(defaultValue: _user);
@@ -50,7 +57,12 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   }
 
   void logout() async {
-    _user = const User(isAuthenticated: false, username: null, accessToken: null, role: null);
+    _user = const User(
+      isAuthenticated: false,
+      username: null,
+      accessToken: null,
+      role: null,
+    );
     _saveDataToRepository();
     _bleMeshServiceProvider.setUserId(null);
   }

@@ -192,28 +192,32 @@ class _LoginPageState extends State<LoginPage> {
         focusedBorder: _buildFocusedBorder(context, theme),
         filled: true,
         fillColor: theme.colorScheme.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
 
-  OutlineInputBorder _buildOutlineBorder(BuildContext context, ThemeData theme, {bool active = true}) {
+  OutlineInputBorder _buildOutlineBorder(
+    BuildContext context,
+    ThemeData theme, {
+    bool active = true,
+  }) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: theme.colorScheme.outline,
-        width: 1.5,
-      ),
+      borderSide: BorderSide(color: theme.colorScheme.outline, width: 1.5),
     );
   }
 
-  OutlineInputBorder _buildFocusedBorder(BuildContext context, ThemeData theme) {
+  OutlineInputBorder _buildFocusedBorder(
+    BuildContext context,
+    ThemeData theme,
+  ) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(
-        color: theme.colorScheme.primary,
-        width: 2,
-      ),
+      borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
     );
   }
 
@@ -223,9 +227,7 @@ class _LoginPageState extends State<LoginPage> {
       style: ElevatedButton.styleFrom(
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         elevation: 2,
       ),

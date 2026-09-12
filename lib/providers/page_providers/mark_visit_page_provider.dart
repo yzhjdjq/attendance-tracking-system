@@ -37,7 +37,9 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   static MarkVisitPageProvider get instance =>
       SingletonMixin.getInstance<MarkVisitPageProvider>();
 
-  static Future<MarkVisitPageProvider> initialize({required BleMeshServiceProvider bleMeshServiceProvider}) async {
+  static Future<MarkVisitPageProvider> initialize({
+    required BleMeshServiceProvider bleMeshServiceProvider,
+  }) async {
     if (SingletonMixin.isInitialized<MarkVisitPageProvider>()) {
       return instance;
     }
@@ -75,15 +77,18 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
   String get userId => _bleMeshServiceProvider.userId ?? '';
-  Future<int> getDirectConnectionsCount() async=> await _bleMeshServiceProvider.getDirectConnectionsCount();
+  Future<int> getDirectConnectionsCount() async =>
+      await _bleMeshServiceProvider.getDirectConnectionsCount();
 
   void subscribeToMeshServiceState() {
-    _meshServiceStateSubscription = _bleMeshServiceProvider.serviceState.listen((newState) {
-      if (_isMeshServiceState != newState) {
-        _isMeshServiceState = newState;
-        notifyListeners();
-      }
-    });
+    _meshServiceStateSubscription = _bleMeshServiceProvider.serviceState.listen(
+      (newState) {
+        if (_isMeshServiceState != newState) {
+          _isMeshServiceState = newState;
+          notifyListeners();
+        }
+      },
+    );
   }
 
   void subscribeToReceiveMessage() {
@@ -143,7 +148,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   }
 
   void startService() {
-    if (_bleMeshServiceProvider.userId != null) { 
+    if (_bleMeshServiceProvider.userId != null) {
       BleMeshService.initMeshService(_bleMeshServiceProvider.userId!);
     }
   }

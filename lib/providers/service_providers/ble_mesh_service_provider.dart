@@ -20,13 +20,14 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   BleMeshServiceProvider._internal() {
     SingletonMixin.registerInstance(this);
 
-    _isServiceStateSubscription = BleMeshService.serviceStateEvents.listen((state) {
+    _isServiceStateSubscription = BleMeshService.serviceStateEvents.listen((
+      state,
+    ) {
       _isServiceState.add(state);
-      
-      if (state == true){
+
+      if (state == true) {
         _enableEventSubscriptions();
-      }
-      else {
+      } else {
         _disableEventSubscriptions();
       }
     });
@@ -39,9 +40,11 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
   static bool _isCoreInitialized = false;
   static StreamSubscription<bool>? _isServiceStateSubscription;
-  static final StreamController<bool> _isServiceState = StreamController<bool>.broadcast();
+  static final StreamController<bool> _isServiceState =
+      StreamController<bool>.broadcast();
   static StreamSubscription<String>? _messagesSubscription;
-  static final StreamController<String> _messages = StreamController<String>.broadcast();
+  static final StreamController<String> _messages =
+      StreamController<String>.broadcast();
 
   void _enableEventSubscriptions() {
     _messagesSubscription?.cancel();
@@ -65,20 +68,20 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
     if (_isCoreInitialized) {
       BleMeshService.setUserId(userId);
-    }
-    else if (userId != null) {
+    } else if (userId != null) {
       BleMeshService.initMeshService(_userId!);
       _isCoreInitialized = true;
-    }
-    else {
+    } else {
       return;
     }
     notifyListeners();
   }
 
-  Future<int> getDirectConnectionsCount() async => await BleMeshService.getNumberOfNetworkMembers();
+  Future<int> getDirectConnectionsCount() async =>
+      await BleMeshService.getNumberOfNetworkMembers();
 
-  Future<SendResult> sendMessage(String message) async => await BleMeshService.sendMessage(message);
+  Future<SendResult> sendMessage(String message) async =>
+      await BleMeshService.sendMessage(message);
 
   @override
   void dispose() {

@@ -6,13 +6,18 @@ class ConnectionsCardWidget extends StatelessWidget {
 
   final int directConnectionsCount;
 
-  const ConnectionsCardWidget({super.key, required this.directConnectionsCount});
+  const ConnectionsCardWidget({
+    super.key,
+    required this.directConnectionsCount,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_borderRoundRadius)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(_borderRoundRadius),
+      ),
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(_borderRoundRadius),
@@ -22,7 +27,10 @@ class ConnectionsCardWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('🔗 ${S.of(context).mark_visit_direct_connections}:', style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                  '🔗 ${S.of(context).mark_visit_direct_connections}:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
                 Text(
                   '$directConnectionsCount',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -35,7 +43,10 @@ class ConnectionsCardWidget extends StatelessWidget {
             ),
             if (directConnectionsCount == 0)
               Padding(
-                padding: const EdgeInsets.only(left: _borderRoundRadius * 3, top: 8.0),
+                padding: const EdgeInsets.only(
+                  left: _borderRoundRadius * 3,
+                  top: 8.0,
+                ),
                 child: Text(
                   S.of(context).mark_visit_no_connections,
                   style: Theme.of(context).textTheme.bodySmall,

@@ -33,7 +33,9 @@ class MarkVisitActionButtonWidget extends StatelessWidget {
           ),
         ),
         child: Text(
-          role == UserRoleViewModel.teacher ? '📢 ${S.of(context).mark_visit_start_poll(10)}' : '✅ ${S.of(context).mark_visit_mark_attendance}',
+          role == UserRoleViewModel.teacher
+              ? '📢 ${S.of(context).mark_visit_start_poll(10)}'
+              : '✅ ${S.of(context).mark_visit_mark_attendance}',
         ),
       ),
     );

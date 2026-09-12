@@ -50,7 +50,10 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             const Text('Вы успешно авторизованы!'),
             const SizedBox(height: 16),
-            Text('Счетчик: $_counter', style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              'Счетчик: $_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ],
         ),
       ),

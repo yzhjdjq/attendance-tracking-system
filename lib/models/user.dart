@@ -6,22 +6,44 @@ class User {
   final String? accessToken;
   final UserRole? role;
 
-  const User({this.isAuthenticated = false, this.username, this.accessToken, this.role = UserRole.student});
+  const User({
+    this.isAuthenticated = false,
+    this.username,
+    this.accessToken,
+    this.role = UserRole.student,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'isAuthenticated': isAuthenticated, 'username': username, 'accessToken': accessToken, 'role': role?.name};
+    return {
+      'isAuthenticated': isAuthenticated,
+      'username': username,
+      'accessToken': accessToken,
+      'role': role?.name,
+    };
   }
 
   static User fromJson(Map<String, dynamic> json) {
     bool iIsAuthenticated = json['isAuthenticated'] ?? false;
     String? iUsername = json['username'];
     String? iAccessToken = json['accessToken'];
-    UserRole? iRole = json['role'] != null ? UserRole.values.firstWhere((ur) => ur.name == json['role'] as String) : null;
+    UserRole? iRole = json['role'] != null
+        ? UserRole.values.firstWhere((ur) => ur.name == json['role'] as String)
+        : null;
 
-    return User(isAuthenticated: iIsAuthenticated, username: iUsername, accessToken: iAccessToken, role: iRole);
+    return User(
+      isAuthenticated: iIsAuthenticated,
+      username: iUsername,
+      accessToken: iAccessToken,
+      role: iRole,
+    );
   }
 
-  User copyWith({bool? isAuthenticated, String? username, String? accessToken, UserRole? role}) {
+  User copyWith({
+    bool? isAuthenticated,
+    String? username,
+    String? accessToken,
+    UserRole? role,
+  }) {
     return User(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       username: username ?? this.username,

@@ -62,28 +62,44 @@ enum SendResult {
 }
 
 class BleMeshService {
-  static const platformMethods = MethodChannel('ru.yzhjdjq.ats.platform_methods');
-  static const platformMethodsServiceState = MethodChannel('ru.yzhjdjq.ats.platform_methods/service_state');
-  static const EventChannel _eventChannelReceiveMessage = EventChannel('ru.yzhjdjq.ats.platform_events/receive_message');
-  static const EventChannel _eventChannelServiceState = EventChannel('ru.yzhjdjq.ats.platform_events/service_state');
+  static const platformMethods = MethodChannel(
+    'ru.yzhjdjq.ats.platform_methods',
+  );
+  static const platformMethodsServiceState = MethodChannel(
+    'ru.yzhjdjq.ats.platform_methods/service_state',
+  );
+  static const EventChannel _eventChannelReceiveMessage = EventChannel(
+    'ru.yzhjdjq.ats.platform_events/receive_message',
+  );
+  static const EventChannel _eventChannelServiceState = EventChannel(
+    'ru.yzhjdjq.ats.platform_events/service_state',
+  );
   static Stream<String>? _eventReceivedMessageStream;
   static Stream<bool>? _eventServiceStateStream;
 
   static Stream<String> get receiveMessageEvents {
-    return _eventReceivedMessageStream ??= _InvokePlatformMethods._receiveBroadcastStream(_eventChannelReceiveMessage, 'received messages');
+    return _eventReceivedMessageStream ??=
+        _InvokePlatformMethods._receiveBroadcastStream(
+          _eventChannelReceiveMessage,
+          'received messages',
+        );
   }
 
   static Stream<bool> get serviceStateEvents {
-    return _eventServiceStateStream ??= _InvokePlatformMethods._receiveBroadcastStream(_eventChannelServiceState, 'service state changes');
+    return _eventServiceStateStream ??=
+        _InvokePlatformMethods._receiveBroadcastStream(
+          _eventChannelServiceState,
+          'service state changes',
+        );
   }
 
-  
   static Future<bool> isImplemented() async {
     return await _InvokePlatformMethods._invokeMethod<bool>(
-      platformMethodsServiceState,
-      'isImplemented',
-      onDefaultErrorResult: () => false,
-    ) ?? false;
+          platformMethodsServiceState,
+          'isImplemented',
+          onDefaultErrorResult: () => false,
+        ) ??
+        false;
   }
 
   static Future<void> initMeshService(String userId) async {
@@ -91,14 +107,14 @@ class BleMeshService {
       platformMethodsServiceState,
       'initMeshForegroundService',
       args: userId,
-      );
+    );
   }
 
   static Future<void> isMeshForegroundServiceRunning() async {
     return await _InvokePlatformMethods._invokeMethod<void>(
       platformMethodsServiceState,
       'isMeshForegroundServiceRunning',
-      );
+    );
   }
 
   static Future<void> setUserId(String? userId) async {
@@ -112,9 +128,8 @@ class BleMeshService {
   static Future<List<PermissionInfo>> getPermissionsState() async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       try {
-        final result = await platformMethods.invokeMethod<Map<dynamic, dynamic>>(
-          'getPermissionsState',
-        );
+        final result = await platformMethods
+            .invokeMethod<Map<dynamic, dynamic>>('getPermissionsState');
         if (result == null) {
           return [];
         }
@@ -147,26 +162,27 @@ class BleMeshService {
 
   static Future<int> getNumberOfNetworkMembers() async {
     return await _InvokePlatformMethods._invokeMethod<int>(
-      platformMethods,
-      'getNumberOfNetworkMembers',
-      onDefaultErrorResult: () => 0,
-    ) ?? 0;
+          platformMethods,
+          'getNumberOfNetworkMembers',
+          onDefaultErrorResult: () => 0,
+        ) ??
+        0;
   }
 
   static Future<SendResult> sendMessage(String message) async {
     return SendResult.fromChannelValue(
       await _InvokePlatformMethods._invokeMethod<String?>(
-        platformMethods,
-        'sendMessage',
-        args: message,
-        onDefaultErrorResult: () => SendResult.notImplemented.name,
-      ) ?? SendResult.notImplemented.name,
+            platformMethods,
+            'sendMessage',
+            args: message,
+            onDefaultErrorResult: () => SendResult.notImplemented.name,
+          ) ??
+          SendResult.notImplemented.name,
     );
   }
 }
 
 abstract final class _InvokePlatformMethods {
-
   static final bool _isAndroid =
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -217,7 +233,9 @@ abstract final class _InvokePlatformMethods {
   ) {
     if (!_isAndroid) {
       if (kDebugMode) {
-        print('Subscription to listen ${eventName ?? 'event'} skipped: Not Android platform');
+        print(
+          'Subscription to listen ${eventName ?? 'event'} skipped: Not Android platform',
+        );
       }
       return Stream<T>.empty();
     }
@@ -225,4 +243,3 @@ abstract final class _InvokePlatformMethods {
     return eventChannel.receiveBroadcastStream().cast<T>();
   }
 }
-
