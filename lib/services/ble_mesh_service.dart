@@ -63,101 +63,49 @@ enum SendResult {
 
 class BleMeshService {
   static const platformMethods = MethodChannel('ru.yzhjdjq.ats.platform_methods');
-  static const platformMethodsInit = MethodChannel('ru.yzhjdjq.ats.platform_methods/init');
+  static const platformMethodsServiceState = MethodChannel('ru.yzhjdjq.ats.platform_methods/service_state');
   static const EventChannel _eventChannelReceiveMessage = EventChannel('ru.yzhjdjq.ats.platform_events/receive_message');
-  static Stream<dynamic>? _eventStream;
+  static const EventChannel _eventChannelServiceState = EventChannel('ru.yzhjdjq.ats.platform_events/service_state');
+  static Stream<String>? _eventReceivedMessageStream;
+  static Stream<bool>? _eventServiceStateStream;
 
-  static final bool _isAndroid =
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
-
-  static Stream<dynamic> get events {
-    if (!_isAndroid) {
-      if (kDebugMode) {
-        print('Subscription to listen to received messages skipped: Not Android platform');
-      }
-      return Stream.empty();
-    }
-
-    _eventStream ??= _eventChannelReceiveMessage.receiveBroadcastStream();
-    return _eventStream!;
+  static Stream<String> get receiveMessageEvents {
+    return _eventReceivedMessageStream ??= _InvokePlatformMethods._receiveBroadcastStream(_eventChannelReceiveMessage, 'received messages');
   }
 
-  static Future<T?> _invokeMethod<T>(
-    String method, {
-    dynamic args,
-    T Function(T? result)? onSuccess,
-    T Function()? onDefaultErrorResult,
-    T Function()? onNotImplemented,
-    T Function(PlatformException e)? onError,
-    T Function(MissingPluginException e)? onMissingPlugin,
-    T Function(Object e)? onUnknownError,
-    T Function()? onPlatformMismatch,
-  }) async {
-    if (!_isAndroid) {
-      if (kDebugMode) {
-        print('Method "$method" skipped: Not Android platform');
-      }
-      return onPlatformMismatch?.call() ?? onDefaultErrorResult?.call();
-    }
-
-    try {
-      final result = args != null
-          ? await platformMethods.invokeMethod<T>(method, args)
-          : await platformMethods.invokeMethod<T>(method);
-      return onSuccess?.call(result) ?? result;
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('PlatformException in $method: ${e.message}');
-      }
-      return onError?.call(e) ?? onDefaultErrorResult as T;
-    } on MissingPluginException catch (e) {
-      if (kDebugMode) {
-        print('MissingPluginException in $method: ${e.message}');
-      }
-      return onMissingPlugin?.call(e) ?? onDefaultErrorResult as T;
-    } catch (e) {
-      if (kDebugMode) {
-        print('Unknown error in $method: $e');
-      }
-      return onUnknownError?.call(e) ?? onDefaultErrorResult as T;
-    }
+  static Stream<bool> get serviceStateEvents {
+    return _eventServiceStateStream ??= _InvokePlatformMethods._receiveBroadcastStream(_eventChannelServiceState, 'service state changes');
   }
 
+  
   static Future<bool> isImplemented() async {
-    return await _invokeMethod<bool>(
+    return await _InvokePlatformMethods._invokeMethod<bool>(
+      platformMethodsServiceState,
       'isImplemented',
       onDefaultErrorResult: () => false,
     ) ?? false;
   }
 
   static Future<void> initMeshService(String userId) async {
-    if (!_isAndroid) {
-      if (kDebugMode) {
-        print('Method init skipped: Not Android platform');
-      }
-    }
+    return await _InvokePlatformMethods._invokeMethod<void>(
+      platformMethodsServiceState,
+      'initMeshForegroundService',
+      args: userId,
+      );
+  }
 
-    try {
-      await platformMethodsInit.invokeMethod<void>('init', userId);
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('PlatformException in init: ${e.message}');
-      }
-    } on MissingPluginException catch (e) {
-      if (kDebugMode) {
-        print('MissingPluginException in init: ${e.message}');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Unknown error in init: $e');
-      }
-    }
+  static Future<void> isMeshForegroundServiceRunning() async {
+    return await _InvokePlatformMethods._invokeMethod<void>(
+      platformMethodsServiceState,
+      'isMeshForegroundServiceRunning',
+      );
   }
 
   static Future<void> setUserId(String? userId) async {
-    await _invokeMethod<void>(
+    await _InvokePlatformMethods._invokeMethod<void>(
+      platformMethodsServiceState,
       'setUserId',
-      args: userId ?? 'empty',
+      args: userId,
     );
   }
 
@@ -198,7 +146,8 @@ class BleMeshService {
   }
 
   static Future<int> getNumberOfNetworkMembers() async {
-    return await _invokeMethod<int>(
+    return await _InvokePlatformMethods._invokeMethod<int>(
+      platformMethods,
       'getNumberOfNetworkMembers',
       onDefaultErrorResult: () => 0,
     ) ?? 0;
@@ -206,7 +155,8 @@ class BleMeshService {
 
   static Future<SendResult> sendMessage(String message) async {
     return SendResult.fromChannelValue(
-      await _invokeMethod<String?>(
+      await _InvokePlatformMethods._invokeMethod<String?>(
+        platformMethods,
         'sendMessage',
         args: message,
         onDefaultErrorResult: () => SendResult.notImplemented.name,
@@ -214,3 +164,65 @@ class BleMeshService {
     );
   }
 }
+
+abstract final class _InvokePlatformMethods {
+
+  static final bool _isAndroid =
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  static Future<T?> _invokeMethod<T>(
+    MethodChannel platformChannel,
+    String method, {
+    dynamic args,
+    T Function(T? result)? onSuccess,
+    T Function()? onDefaultErrorResult,
+    T Function(PlatformException e)? onError,
+    T Function(MissingPluginException e)? onMissingPlugin,
+    T Function(Object e)? onUnknownError,
+    T Function()? onPlatformMismatch,
+  }) async {
+    if (!_isAndroid) {
+      if (kDebugMode) {
+        print('Method "$method" skipped: Not Android platform');
+      }
+      return onPlatformMismatch?.call() ?? onDefaultErrorResult?.call();
+    }
+
+    try {
+      final result = args != null
+          ? await platformChannel.invokeMethod<T>(method, args)
+          : await platformChannel.invokeMethod<T>(method);
+      return onSuccess?.call(result) ?? result;
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('PlatformException in $method: ${e.message}');
+      }
+      return onError?.call(e) ?? onDefaultErrorResult?.call();
+    } on MissingPluginException catch (e) {
+      if (kDebugMode) {
+        print('MissingPluginException in $method: ${e.message}');
+      }
+      return onMissingPlugin?.call(e) ?? onDefaultErrorResult?.call();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown error in $method: $e');
+      }
+      return onUnknownError?.call(e) ?? onDefaultErrorResult?.call();
+    }
+  }
+
+  static Stream<T> _receiveBroadcastStream<T>(
+    EventChannel eventChannel,
+    String? eventName,
+  ) {
+    if (!_isAndroid) {
+      if (kDebugMode) {
+        print('Subscription to listen ${eventName ?? 'event'} skipped: Not Android platform');
+      }
+      return Stream<T>.empty();
+    }
+
+    return eventChannel.receiveBroadcastStream().cast<T>();
+  }
+}
+

@@ -1,4 +1,4 @@
-import 'dart:async' show StreamController;
+import 'dart:async' show StreamController, StreamSubscription;
 
 import 'package:ats/providers/providers.dart' show SingletonMixin;
 import 'package:ats/services/ble_mesh_service.dart';
@@ -20,30 +20,58 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   BleMeshServiceProvider._internal() {
     SingletonMixin.registerInstance(this);
 
-    BleMeshService.events.listen( (event) {
-      _messages.add(event);
+    _isServiceStateSubscription = BleMeshService.serviceStateEvents.listen((state) {
+      _isServiceState.add(state);
+      
+      if (state == true){
+        _enableEventSubscriptions();
+      }
+      else {
+        _disableEventSubscriptions();
+      }
     });
   }
 
   static bool get isInitialized =>
       SingletonMixin.isInitialized<BleMeshServiceProvider>();
 
-  static bool _isCoreInitialized = false;
-  String _userId = 'empty';
-  final StreamController<String> _messages = StreamController<String>.broadcast();
+  static String? _userId;
 
-  String get userId => _userId;
+  static bool _isCoreInitialized = false;
+  static StreamSubscription<bool>? _isServiceStateSubscription;
+  static final StreamController<bool> _isServiceState = StreamController<bool>.broadcast();
+  static StreamSubscription<String>? _messagesSubscription;
+  static final StreamController<String> _messages = StreamController<String>.broadcast();
+
+  void _enableEventSubscriptions() {
+    _messagesSubscription?.cancel();
+    _messagesSubscription = BleMeshService.receiveMessageEvents.listen((event) {
+      _messages.add(event);
+    });
+  }
+
+  void _disableEventSubscriptions() {
+    _messagesSubscription?.cancel();
+    _messagesSubscription = null;
+  }
+
+  String? get userId => _userId;
 
   Stream<String> get messages => _messages.stream;
+  Stream<bool> get serviceState => _isServiceState.stream;
 
   void setUserId(String? userId) {
-    _userId = userId ?? '';
+    _userId = userId;
+
     if (_isCoreInitialized) {
       BleMeshService.setUserId(userId);
     }
-    else {
-      BleMeshService.initMeshService(_userId);
+    else if (userId != null) {
+      BleMeshService.initMeshService(_userId!);
       _isCoreInitialized = true;
+    }
+    else {
+      return;
     }
     notifyListeners();
   }
@@ -51,4 +79,12 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   Future<int> getDirectConnectionsCount() async => await BleMeshService.getNumberOfNetworkMembers();
 
   Future<SendResult> sendMessage(String message) async => await BleMeshService.sendMessage(message);
+
+  @override
+  void dispose() {
+    _isServiceStateSubscription?.cancel();
+    _messagesSubscription?.cancel();
+
+    super.dispose();
+  }
 }

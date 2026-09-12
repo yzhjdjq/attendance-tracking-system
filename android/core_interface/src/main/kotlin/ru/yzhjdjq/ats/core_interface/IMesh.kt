@@ -1,6 +1,9 @@
 package ru.yzhjdjq.ats.core_interface
 
+import android.content.Context
 import android.util.Log
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * Список используемых разрешений
@@ -49,18 +52,45 @@ interface IMesh {
     fun isImplemented(): Boolean
 
     /**
-     * Устанавливает идентификатор пользователя
+     * Запускает BLE MeshForegroundService
      *
+     * @param applicationContext контекст приложения
      * @param userId идентификатор пользователя
      */
-    fun setUserId(userId: String)
+    fun initMeshForegroundService(applicationContext: Context, userId: String)
 
     /**
-     * Устанавливает callback для передачи полученных сообщений на frontend
-     *
-     * @param callback функция, принимающая полученное сообщение в String формате
+     * Возвращает true, если BLE MeshForegroundService запущен
      */
-    fun setCallbackReceiveMessage(callback: (String) -> Unit)
+    fun isMeshForegroundServiceRunning(): Boolean
+
+    /**
+     * Останавливает BLE MeshForegroundService
+     *
+     * @param applicationContext контекст приложения
+     */
+    fun stopMeshForegroundService(applicationContext: Context)
+
+    /**
+     * Возвращает поток состояний BLE MeshForegroundService'а
+     */
+    fun serviceStateFlow(): Flow<Boolean>
+
+    /**
+     * Устанавливает идентификатор пользователя
+     *
+     * Если идентификатор пользователя не установлен (null),
+     * то MeshService будет остановлен.
+     *
+     * @param applicationContext контекст приложения
+     * @param userId идентификатор пользователя
+     */
+    fun setUserId(applicationContext: Context, userId: String?)
+
+    /**
+     * Возвращает поток полученных сообщений
+     */
+    fun receiveMessageFlow(): Flow<String>
 
     /**
      * Возвращает список PermissionStatus, описывая все необходимые разрешения
@@ -83,8 +113,12 @@ interface IMesh {
 
 class StubMesh : IMesh {
     override fun isImplemented(): Boolean = false
-    override fun setUserId(userId: String): Unit = Unit
-    override fun setCallbackReceiveMessage(callback: (String) -> Unit): Unit = Unit
+    override fun initMeshForegroundService(applicationContext: Context, userId: String) = Unit
+    override fun isMeshForegroundServiceRunning(): Boolean = false
+    override fun stopMeshForegroundService(applicationContext: Context) = Unit
+    override fun serviceStateFlow(): Flow<Boolean> = flowOf(false)
+    override fun setUserId(applicationContext: Context, userId: String?): Unit = Unit
+    override fun receiveMessageFlow(): Flow<String> = flowOf("Not implemented")
     override fun getPermissionsState(): List<PermissionStatus> =
         listOf(PermissionStatus(name = Permissions.NOT_IMPLEMENTED, granted = false, required = false))
     override fun getNumberOfNetworkMembers(): Int = 0

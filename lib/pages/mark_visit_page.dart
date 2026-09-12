@@ -32,8 +32,12 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       drawer: const MainDrawerWidget(),
       body: Consumer<MarkVisitPageProvider>(
         builder: (context, provider, child) {
-          final uiState = provider;
-          return _buildBody(context, provider, uiState);
+          if (!provider.isMeshServiceRunning()) {
+          return _ServiceStoppedView(
+            onRestart: () => provider.startService(),
+          );
+        }
+        return _buildBody(context, provider, provider);
         },
       ),
     );
@@ -238,6 +242,43 @@ class _PollStatusCard extends StatelessWidget {
       label: Text('⏳ ${S.of(context).mark_visit_poll_active}'),
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    );
+  }
+}
+
+class _ServiceStoppedView extends StatelessWidget {
+  const _ServiceStoppedView({required this.onRestart});
+
+  final VoidCallback onRestart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.cloud_off,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "BLE Mesh сервис не работает!\nПерезапустите приложение.",
+              style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: onRestart,
+              icon: const Icon(Icons.refresh),
+              label: Text('Запустить сервис'), //S.of(context).mark_visit_restart_service),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

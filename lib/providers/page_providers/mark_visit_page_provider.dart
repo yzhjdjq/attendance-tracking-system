@@ -1,5 +1,7 @@
+import 'dart:async' show StreamSubscription;
+
 import 'package:ats/models/models.dart' show UserRole;
-import 'package:ats/providers/service_providers/ble_mesh_service_provider.dart';
+import 'package:ats/providers/providers.dart' show BleMeshServiceProvider;
 import 'package:ats/services/services.dart' show BleMeshService, SendResult;
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
@@ -46,6 +48,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   MarkVisitPageProvider._internal(this._bleMeshServiceProvider) {
     SingletonMixin.registerInstance(this);
+    subscribeToMeshServiceState();
     subscribeToReceiveMessage();
   }
 
@@ -54,12 +57,16 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   late final BleMeshServiceProvider _bleMeshServiceProvider;
 
+  StreamSubscription<bool>? _meshServiceStateSubscription;
+  StreamSubscription<String>? _messagesSubscription;
+
   UserRoleViewModel _role = UserRoleViewModel.student;
   List<String> _logMessages = [];
   List<String> _attendedStudents = [];
   bool _isPollActive = false;
   String? _errorMessage;
   bool _autoScrollLog = true;
+  bool _isMeshServiceState = false;
 
   UserRoleViewModel get role => _role;
   List<String> get logMessages => _logMessages;
@@ -67,15 +74,26 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   bool get isPollActive => _isPollActive;
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
-  String get userId => _bleMeshServiceProvider.userId;
+  String get userId => _bleMeshServiceProvider.userId ?? '';
   Future<int> getDirectConnectionsCount() async=> await _bleMeshServiceProvider.getDirectConnectionsCount();
 
+  void subscribeToMeshServiceState() {
+    _meshServiceStateSubscription = _bleMeshServiceProvider.serviceState.listen((newState) {
+      if (_isMeshServiceState != newState) {
+        _isMeshServiceState = newState;
+        notifyListeners();
+      }
+    });
+  }
+
   void subscribeToReceiveMessage() {
-    _bleMeshServiceProvider.messages.listen((message) {
+    _messagesSubscription = _bleMeshServiceProvider.messages.listen((message) {
       _logMessages.add(message);
       notifyListeners();
     });
   }
+
+  bool isMeshServiceRunning() => _isMeshServiceState;
 
   void setRole(UserRoleViewModel role) {
     _role = role;
@@ -122,5 +140,18 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     return SendResultViewModel.fromSendResult(
       await BleMeshService.sendMessage(message),
     );
+  }
+
+  void startService() {
+    if (_bleMeshServiceProvider.userId != null) { 
+      BleMeshService.initMeshService(_bleMeshServiceProvider.userId!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _messagesSubscription?.cancel();
+    _meshServiceStateSubscription?.cancel();
+    super.dispose();
   }
 }
