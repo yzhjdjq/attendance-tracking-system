@@ -6,24 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 /**
- * Список используемых разрешений
- */
-enum class Permissions
-{
-    NOT_IMPLEMENTED,
-    BLUETOOTH,
-    BLUETOOTH_ADMIN,
-    BLUETOOTH_SCAN,
-    BLUETOOTH_CONNECT,
-    BLUETOOTH_ADVERTISE,
-    ACCESS_FINE_LOCATION,
-    ACCESS_COARSE_LOCATION,
-    POST_NOTIFICATIONS;
-
-    fun toChannelValue(): String = this.name.lowercase()
-}
-
-/**
  * Список возможных результатов отправки сообщения
  */
 enum class SendResult
@@ -34,16 +16,6 @@ enum class SendResult
 
     fun toChannelValue(): String = this.name.lowercase()
 }
-
-/**
- * Класс, описывающий статус разрешения
- */
-data class PermissionStatus(
-    val name: Permissions,
-    val granted: Boolean,
-    val required: Boolean = true
-)
-
 
 interface IMesh {
     /**
@@ -93,11 +65,6 @@ interface IMesh {
     fun receiveMessageFlow(): Flow<String>
 
     /**
-     * Возвращает список PermissionStatus, описывая все необходимые разрешения
-     */
-    fun getPermissionsState(): List<PermissionStatus>
-
-    /**
      * Возвращает количество участников сети
      *
      * На текущий момент возвращает количество BLE соединений
@@ -119,8 +86,6 @@ class StubMesh : IMesh {
     override fun serviceStateFlow(): Flow<Boolean> = flowOf(false)
     override fun setUserId(applicationContext: Context, userId: String?): Unit = Unit
     override fun receiveMessageFlow(): Flow<String> = flowOf("Not implemented")
-    override fun getPermissionsState(): List<PermissionStatus> =
-        listOf(PermissionStatus(name = Permissions.NOT_IMPLEMENTED, granted = false, required = false))
     override fun getNumberOfNetworkMembers(): Int = 0
     override fun sendMessage(message: String): SendResult = SendResult.NOT_IMPLEMENTED
 }

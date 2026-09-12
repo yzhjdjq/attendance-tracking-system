@@ -1,5 +1,9 @@
 import 'package:ats/providers/providers.dart'
-    show UserProvider, LoginPageProvider, MarkVisitPageProvider;
+    show
+        LoginPageProvider,
+        MarkVisitPageProvider,
+        PermissionsProvider,
+        UserProvider;
 import 'package:ats/providers/service_providers/ble_mesh_service_provider.dart';
 import 'package:ats/services/services.dart' show S, StorageService;
 import 'package:ats/widgets/widgets.dart' show AuthCheckerWidget;
@@ -9,7 +13,10 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageService.initialize();
-  await BleMeshServiceProvider.initialize();
+  await PermissionsProvider.initialize();
+  await BleMeshServiceProvider.initialize(
+    permissionsProvider: PermissionsProvider.instance,
+  );
   await UserProvider.initialize(
     bleMeshServiceProvider: BleMeshServiceProvider.instance,
   );
@@ -27,6 +34,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => PermissionsProvider.instance,
+        ),
         ChangeNotifierProvider(create: (context) => UserProvider.instance),
         ChangeNotifierProvider(create: (context) => LoginPageProvider.instance),
         ChangeNotifierProvider(

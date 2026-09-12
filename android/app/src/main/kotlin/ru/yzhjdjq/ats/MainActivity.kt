@@ -6,10 +6,8 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import ru.yzhjdjq.ats.core_interface.*
 import ru.yzhjdjq.ats.utils.ChannelBridge
 
@@ -63,7 +61,6 @@ class MainActivity : FlutterActivity() {
         flutterEngine?.dartExecutor?.binaryMessenger?.let { MethodChannel(it, CHANNEL_METHODS) }
             ?.setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "getPermissionsState" -> result.success((getPermissionsState(mesh.getPermissionsState())))
                     "getNumberOfNetworkMembers" -> result.success(mesh.getNumberOfNetworkMembers())
                     "sendMessage" -> result.success(mesh.sendMessage(call.arguments as String).toChannelValue())
                     else -> result.notImplemented()
@@ -96,14 +93,5 @@ class MainActivity : FlutterActivity() {
             bridgeScope.cancel()
 
         super.onDestroy()
-    }
-
-    fun getPermissionsState(permissions: List<PermissionStatus>): Map<String, Map<String, Boolean>> {
-        return permissions.map { permission ->
-            permission.name.toChannelValue() to mapOf(
-                "granted" to permission.granted,
-                "required" to permission.required
-            )
-        }.toMap()
     }
 }

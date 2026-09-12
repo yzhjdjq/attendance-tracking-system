@@ -1,3 +1,4 @@
+import 'package:ats/pages/pages.dart' show PermissionsPage;
 import 'package:ats/providers/providers.dart'
     show MarkVisitPageProvider, SendResultViewModel, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
@@ -32,22 +33,40 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       drawer: const MainDrawerWidget(),
       body: Consumer<MarkVisitPageProvider>(
         builder: (context, provider, child) {
-          if (!provider.isMeshServiceRunning()) {
+          if (!provider.canStart) {
             return _ServiceStoppedView(
-              onRestart: () => provider.startService(),
+              icon: Icons.lock_outline,
+              isError: true,
+              title:
+                  'Нет разрешений для работы BLE Mesh.\nВыдайте разрешения, чтобы продолжить.',
+              buttonIcon: Icons.security,
+              buttonLabel: 'Открыть разрешения',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PermissionsPage()),
+                );
+              },
             );
           }
-          return _buildBody(context, provider, provider);
+
+          if (!provider.isMeshServiceRunning()) {
+            return _ServiceStoppedView(
+              icon: Icons.cloud_off,
+              title: 'BLE Mesh сервис не работает!\nЗапустите его.',
+              buttonIcon: Icons.refresh,
+              buttonLabel: 'Запустить сервис',
+              onPressed: () => provider.startService(),
+            );
+          }
+
+          return _buildBody(context, provider);
         },
       ),
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    MarkVisitPageProvider provider,
-    dynamic uiState,
-  ) {
+  Widget _buildBody(BuildContext context, MarkVisitPageProvider provider) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableHeight = constraints.maxHeight;
@@ -71,15 +90,15 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         const SizedBox(height: 16),
 
                         // Отображение ошибки
-                        if (uiState.errorMessage != null)
+                        if (provider.errorMessage != null)
                           ErrorCardWidget(
-                            errorMessage: uiState.errorMessage!,
+                            errorMessage: provider.errorMessage!,
                             onRetry: () {
                               provider.clearError();
                             },
                           ),
 
-                        if (uiState.errorMessage != null)
+                        if (provider.errorMessage != null)
                           const SizedBox(height: 16),
 
                         // Счетчик прямых BLE подключений
@@ -102,7 +121,7 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
 
                         // Выбор роли
                         RoleSelectorWidget(
-                          currentRole: uiState.role,
+                          currentRole: provider.role,
                           onRoleSelected: (role) {
                             provider.setRole(role);
                             provider.addLog(
@@ -124,37 +143,37 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
 
                         // Кнопка действия
                         MarkVisitActionButtonWidget(
-                          role: uiState.role,
-                          isPollActive: uiState.isPollActive,
-                          hasError: uiState.errorMessage != null,
+                          role: provider.role,
+                          isPollActive: provider.isPollActive,
+                          hasError: provider.errorMessage != null,
                           onPressed: () =>
                               _handlePrimaryButtonClick(context, provider),
                         ),
 
                         // Статус опроса
-                        if (uiState.role == UserRoleViewModel.teacher &&
-                            uiState.isPollActive)
+                        if (provider.role == UserRoleViewModel.teacher &&
+                            provider.isPollActive)
                           const SizedBox(height: 16),
-                        if (uiState.role == UserRoleViewModel.teacher &&
-                            uiState.isPollActive)
+                        if (provider.role == UserRoleViewModel.teacher &&
+                            provider.isPollActive)
                           const _PollStatusCard(),
 
                         // Список отметившихся
-                        if (uiState.role == UserRoleViewModel.teacher &&
-                            uiState.attendedStudents.isNotEmpty)
+                        if (provider.role == UserRoleViewModel.teacher &&
+                            provider.attendedStudents.isNotEmpty)
                           const SizedBox(height: 16),
-                        if (uiState.role == UserRoleViewModel.teacher &&
-                            uiState.attendedStudents.isNotEmpty)
+                        if (provider.role == UserRoleViewModel.teacher &&
+                            provider.attendedStudents.isNotEmpty)
                           AttendedStudentsCardWidget(
-                            students: uiState.attendedStudents,
+                            students: provider.attendedStudents,
                           ),
 
                         // Информация о подключениях
-                        // if (uiState.connectedPeers.isNotEmpty)
+                        // if (provider.connectedPeers.isNotEmpty)
                         //   const SizedBox(height: 16),
-                        // if (uiState.connectedPeers.isNotEmpty)
+                        // if (provider.connectedPeers.isNotEmpty)
                         //   ConnectedPeersCardWidget(
-                        //     peers: uiState.connectedPeers,
+                        //     peers: provider.connectedPeers,
                         //   ),
                         const SizedBox(height: 16),
                       ],
@@ -166,8 +185,8 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: LogCardWidget(
-                        logMessages: uiState.logMessages,
-                        autoScrollLog: uiState.autoScrollLog,
+                        logMessages: provider.logMessages,
+                        autoScrollLog: provider.autoScrollLog,
                         onClearLog: () {
                           provider.clearLogs();
                           provider.addLog(
@@ -175,9 +194,9 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                           );
                         },
                         onToggleAutoScroll: () {
-                          provider.setAutoScrollLog(!uiState.autoScrollLog);
+                          provider.setAutoScrollLog(!provider.autoScrollLog);
                           provider.addLog(
-                            uiState.autoScrollLog
+                            provider.autoScrollLog
                                 ? '📌 ${S.of(context).mark_visit_auto_scroll_enabled}'
                                 : '📌 ${S.of(context).mark_visit_auto_scroll_disabled}',
                           );
@@ -249,12 +268,25 @@ class _PollStatusCard extends StatelessWidget {
 }
 
 class _ServiceStoppedView extends StatelessWidget {
-  const _ServiceStoppedView({required this.onRestart});
+  const _ServiceStoppedView({
+    required this.title,
+    required this.icon,
+    required this.buttonLabel,
+    required this.onPressed,
+    this.buttonIcon = Icons.refresh,
+    this.isError = false,
+  });
 
-  final VoidCallback onRestart;
+  final String title;
+  final IconData icon;
+  final String buttonLabel;
+  final IconData buttonIcon;
+  final VoidCallback onPressed;
+  final bool isError;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -262,23 +294,21 @@ class _ServiceStoppedView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.cloud_off,
+              icon,
               size: 64,
-              color: Theme.of(context).colorScheme.error,
+              color: isError ? scheme.error : scheme.primary,
             ),
             const SizedBox(height: 16),
             Text(
-              "BLE Mesh сервис не работает!\nПерезапустите приложение.",
+              title,
               style: Theme.of(context).textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: onRestart,
-              icon: const Icon(Icons.refresh),
-              label: Text(
-                'Запустить сервис',
-              ), //S.of(context).mark_visit_restart_service),
+              onPressed: onPressed,
+              icon: Icon(buttonIcon),
+              label: Text(buttonLabel),
             ),
           ],
         ),

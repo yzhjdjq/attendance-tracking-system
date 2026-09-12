@@ -142,6 +142,12 @@ abstract class AppLocalizations {
   /// **'Выйти'**
   String get logout_action;
 
+  /// No description provided for @settings_page_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки'**
+  String get settings_page_title;
+
   /// No description provided for @enter_login_message.
   ///
   /// In ru, this message translates to:
@@ -339,6 +345,138 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Опрос участников начат (ретрансляция через mesh)'**
   String get mark_visit_poll_started;
+
+  /// No description provided for @permission_bluetoothScan_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Bluetooth Scan'**
+  String get permission_bluetoothScan_title;
+
+  /// No description provided for @permission_bluetoothScan_description.
+  ///
+  /// In ru, this message translates to:
+  /// **'Поиск BLE-устройств рядом'**
+  String get permission_bluetoothScan_description;
+
+  /// No description provided for @permission_bluetoothConnect_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Bluetooth Connect'**
+  String get permission_bluetoothConnect_title;
+
+  /// No description provided for @permission_bluetoothConnect_description.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подключение к найденным BLE-устройствам'**
+  String get permission_bluetoothConnect_description;
+
+  /// No description provided for @permission_bluetoothAdvertise_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Bluetooth Advertise'**
+  String get permission_bluetoothAdvertise_title;
+
+  /// No description provided for @permission_bluetoothAdvertise_description.
+  ///
+  /// In ru, this message translates to:
+  /// **'Открытие собственного BLE-сервиса'**
+  String get permission_bluetoothAdvertise_description;
+
+  /// No description provided for @permission_location_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Геолокация'**
+  String get permission_location_title;
+
+  /// No description provided for @permission_location_description.
+  ///
+  /// In ru, this message translates to:
+  /// **'Обязательна для BLE-сканирования на Android ≤ 11'**
+  String get permission_location_description;
+
+  /// No description provided for @permission_notification_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Уведомления'**
+  String get permission_notification_title;
+
+  /// No description provided for @permission_notification_description.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нужны, чтобы BLE-сервис работал в фоне'**
+  String get permission_notification_description;
+
+  /// No description provided for @permission_statusLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Статус'**
+  String get permission_statusLabel;
+
+  /// No description provided for @permission_status_granted.
+  ///
+  /// In ru, this message translates to:
+  /// **'выдано'**
+  String get permission_status_granted;
+
+  /// No description provided for @permission_status_denied.
+  ///
+  /// In ru, this message translates to:
+  /// **'отклонено'**
+  String get permission_status_denied;
+
+  /// No description provided for @permission_status_permanentlyDenied.
+  ///
+  /// In ru, this message translates to:
+  /// **'запрещено навсегда'**
+  String get permission_status_permanentlyDenied;
+
+  /// No description provided for @permission_status_restricted.
+  ///
+  /// In ru, this message translates to:
+  /// **'ограничено'**
+  String get permission_status_restricted;
+
+  /// No description provided for @permission_status_unknown.
+  ///
+  /// In ru, this message translates to:
+  /// **'неизвестно'**
+  String get permission_status_unknown;
+
+  /// No description provided for @permission_page_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Разрешения приложения'**
+  String get permission_page_title;
+
+  /// No description provided for @permission_action_request.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запросить'**
+  String get permission_action_request;
+
+  /// No description provided for @permission_action_open.
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыть'**
+  String get permission_action_open;
+
+  /// No description provided for @permission_action_requestAll.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запросить все'**
+  String get permission_action_requestAll;
+
+  /// No description provided for @permission_action_openSystemSettings.
+  ///
+  /// In ru, this message translates to:
+  /// **'Настройки ОС'**
+  String get permission_action_openSystemSettings;
+
+  /// No description provided for @permission_action_refresh.
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновить статусы'**
+  String get permission_action_refresh;
 }
 
 class _AppLocalizationsDelegate

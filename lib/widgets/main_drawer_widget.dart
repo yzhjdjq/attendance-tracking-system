@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ats/providers/providers.dart' show UserProvider;
 import 'package:ats/services/services.dart' show S;
-import 'package:ats/pages/pages.dart' show HomePage, LoginPage, MarkVisitPage;
+import 'package:ats/pages/pages.dart'
+    show HomePage, LoginPage, MarkVisitPage, SettingsPage;
 
 class MainDrawerWidget extends StatelessWidget {
   const MainDrawerWidget({super.key});
@@ -32,6 +33,17 @@ class MainDrawerWidget extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const MarkVisitPage()),
+              );
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings,
+            title: S.of(context).settings_page_title,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
               );
             },
           ),

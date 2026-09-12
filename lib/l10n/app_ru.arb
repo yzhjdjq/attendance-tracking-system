@@ -11,6 +11,7 @@
   "home_page_title": "Главная",
   "mark_visit_page_title": "Отметка посещения",
   "logout_action": "Выйти",
+  "settings_page_title": "Настройки",
 
   "@_LOGIN_PAGE": {},
   "enter_login_message": "Введите логин",
@@ -49,5 +50,32 @@
   "mark_visit_log_empty": "Нет сообщений",
   "mark_visit_log_cleared": "Лог очищен",
   "mark_visit_attendance_marked": "Отметка о посещаемости отправлена",
-  "mark_visit_poll_started": "Опрос участников начат (ретрансляция через mesh)"
+  "mark_visit_poll_started": "Опрос участников начат (ретрансляция через mesh)",
+
+  
+  "@_PERMISSIONS": {},
+  "permission_bluetoothScan_title": "Bluetooth Scan",
+  "permission_bluetoothScan_description": "Поиск BLE-устройств рядом",
+  "permission_bluetoothConnect_title": "Bluetooth Connect",
+  "permission_bluetoothConnect_description": "Подключение к найденным BLE-устройствам",
+  "permission_bluetoothAdvertise_title": "Bluetooth Advertise",
+  "permission_bluetoothAdvertise_description": "Открытие собственного BLE-сервиса",
+  "permission_location_title": "Геолокация",
+  "permission_location_description": "Обязательна для BLE-сканирования на Android ≤ 11",
+  "permission_notification_title": "Уведомления",
+  "permission_notification_description": "Нужны, чтобы BLE-сервис работал в фоне",
+  "permission_statusLabel": "Статус",
+  "permission_status_granted": "выдано",
+  "permission_status_denied": "отклонено",
+  "permission_status_permanentlyDenied": "запрещено навсегда",
+  "permission_status_restricted": "ограничено",
+  "permission_status_unknown": "неизвестно",
+
+  "@_PERMISSIONS_PAGE": {},
+  "permission_page_title": "Разрешения приложения",
+  "permission_action_request": "Запросить",
+  "permission_action_open": "Открыть",
+  "permission_action_requestAll": "Запросить все",
+  "permission_action_openSystemSettings": "Настройки ОС",
+  "permission_action_refresh": "Обновить статусы"
 }

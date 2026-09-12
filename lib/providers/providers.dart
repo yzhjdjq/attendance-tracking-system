@@ -9,4 +9,10 @@ export 'page_providers/page_providers.dart'
         SendResultViewModel,
         UserRoleViewModel;
 
-export 'service_providers/service_providers.dart' show BleMeshServiceProvider;
+export 'service_providers/service_providers.dart'
+    show
+        BleMeshServiceProvider,
+        PermissionKind,
+        PermissionEntry,
+        PermissionUiStatus,
+        PermissionsProvider;

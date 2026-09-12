@@ -33,6 +33,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get logout_action => 'Выйти';
 
   @override
+  String get settings_page_title => 'Настройки';
+
+  @override
   String get enter_login_message => 'Введите логин';
 
   @override
@@ -138,4 +141,75 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get mark_visit_poll_started =>
       'Опрос участников начат (ретрансляция через mesh)';
+
+  @override
+  String get permission_bluetoothScan_title => 'Bluetooth Scan';
+
+  @override
+  String get permission_bluetoothScan_description =>
+      'Поиск BLE-устройств рядом';
+
+  @override
+  String get permission_bluetoothConnect_title => 'Bluetooth Connect';
+
+  @override
+  String get permission_bluetoothConnect_description =>
+      'Подключение к найденным BLE-устройствам';
+
+  @override
+  String get permission_bluetoothAdvertise_title => 'Bluetooth Advertise';
+
+  @override
+  String get permission_bluetoothAdvertise_description =>
+      'Открытие собственного BLE-сервиса';
+
+  @override
+  String get permission_location_title => 'Геолокация';
+
+  @override
+  String get permission_location_description =>
+      'Обязательна для BLE-сканирования на Android ≤ 11';
+
+  @override
+  String get permission_notification_title => 'Уведомления';
+
+  @override
+  String get permission_notification_description =>
+      'Нужны, чтобы BLE-сервис работал в фоне';
+
+  @override
+  String get permission_statusLabel => 'Статус';
+
+  @override
+  String get permission_status_granted => 'выдано';
+
+  @override
+  String get permission_status_denied => 'отклонено';
+
+  @override
+  String get permission_status_permanentlyDenied => 'запрещено навсегда';
+
+  @override
+  String get permission_status_restricted => 'ограничено';
+
+  @override
+  String get permission_status_unknown => 'неизвестно';
+
+  @override
+  String get permission_page_title => 'Разрешения приложения';
+
+  @override
+  String get permission_action_request => 'Запросить';
+
+  @override
+  String get permission_action_open => 'Открыть';
+
+  @override
+  String get permission_action_requestAll => 'Запросить все';
+
+  @override
+  String get permission_action_openSystemSettings => 'Настройки ОС';
+
+  @override
+  String get permission_action_refresh => 'Обновить статусы';
 }

@@ -110,11 +110,12 @@ class BleMeshService {
     );
   }
 
-  static Future<void> isMeshForegroundServiceRunning() async {
-    return await _InvokePlatformMethods._invokeMethod<void>(
-      platformMethodsServiceState,
-      'isMeshForegroundServiceRunning',
-    );
+  static Future<bool> isMeshForegroundServiceRunning() async {
+    return await _InvokePlatformMethods._invokeMethod<bool>(
+          platformMethodsServiceState,
+          'isMeshForegroundServiceRunning',
+        ) ??
+        false;
   }
 
   static Future<void> setUserId(String? userId) async {
@@ -123,41 +124,6 @@ class BleMeshService {
       'setUserId',
       args: userId,
     );
-  }
-
-  static Future<List<PermissionInfo>> getPermissionsState() async {
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      try {
-        final result = await platformMethods
-            .invokeMethod<Map<dynamic, dynamic>>('getPermissionsState');
-        if (result == null) {
-          return [];
-        }
-        return result.entries.map((entry) {
-          return PermissionInfo.fromMap(entry.key, entry.value);
-        }).toList();
-      } on PlatformException catch (e) {
-        if (kDebugMode) {
-          print("Ошибка при получении состояния разрешений: $e");
-          return [];
-        }
-      } on MissingPluginException catch (e) {
-        if (kDebugMode) {
-          print("BLE Mesh ядро не реализовано: ${e.message}");
-          return [];
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print("Неизвестная ошибка при получении состояния разрешений: $e");
-          return [];
-        }
-      }
-    } else {
-      if (kDebugMode) {
-        print('getPermissionsState skipped: Not Android platform');
-      }
-    }
-    return [];
   }
 
   static Future<int> getNumberOfNetworkMembers() async {

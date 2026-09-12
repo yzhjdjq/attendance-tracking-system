@@ -1,6 +1,7 @@
 import 'dart:async' show StreamController, StreamSubscription;
 
-import 'package:ats/providers/providers.dart' show SingletonMixin;
+import 'package:ats/providers/providers.dart'
+    show PermissionsProvider, SingletonMixin;
 import 'package:ats/services/ble_mesh_service.dart';
 import 'package:flutter/material.dart' show ChangeNotifier;
 
@@ -8,17 +9,21 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   static BleMeshServiceProvider get instance =>
       SingletonMixin.getInstance<BleMeshServiceProvider>();
 
-  static Future<BleMeshServiceProvider> initialize() async {
+  static Future<BleMeshServiceProvider> initialize({
+    required PermissionsProvider permissionsProvider,
+  }) async {
     if (SingletonMixin.isInitialized<BleMeshServiceProvider>()) {
       return instance;
     }
 
-    final provider = BleMeshServiceProvider._internal();
+    final provider = BleMeshServiceProvider._internal(permissionsProvider);
     return provider;
   }
 
-  BleMeshServiceProvider._internal() {
+  BleMeshServiceProvider._internal(this._permissionsProvider) {
     SingletonMixin.registerInstance(this);
+
+    _permissionsProvider.addListener(_onPermissionsChanged);
 
     _isServiceStateSubscription = BleMeshService.serviceStateEvents.listen((
       state,
@@ -36,14 +41,16 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   static bool get isInitialized =>
       SingletonMixin.isInitialized<BleMeshServiceProvider>();
 
-  static String? _userId;
+  late final PermissionsProvider _permissionsProvider;
 
-  static bool _isCoreInitialized = false;
-  static StreamSubscription<bool>? _isServiceStateSubscription;
-  static final StreamController<bool> _isServiceState =
+  String? _userId;
+
+  bool _isCoreInitialized = false;
+  StreamSubscription<bool>? _isServiceStateSubscription;
+  final StreamController<bool> _isServiceState =
       StreamController<bool>.broadcast();
-  static StreamSubscription<String>? _messagesSubscription;
-  static final StreamController<String> _messages =
+  StreamSubscription<String>? _messagesSubscription;
+  final StreamController<String> _messages =
       StreamController<String>.broadcast();
 
   void _enableEventSubscriptions() {
@@ -58,6 +65,17 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
     _messagesSubscription = null;
   }
 
+  void _onPermissionsChanged() {
+    BleMeshService.isMeshForegroundServiceRunning().then(
+      (state) => {
+        if (state == false) {setUserId(userId)},
+      },
+    );
+  }
+
+  bool get canStart =>
+      userId != null && _permissionsProvider.allMeshPermissionsGranted;
+
   String? get userId => _userId;
 
   Stream<String> get messages => _messages.stream;
@@ -68,7 +86,7 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
     if (_isCoreInitialized) {
       BleMeshService.setUserId(userId);
-    } else if (userId != null) {
+    } else if (canStart) {
       BleMeshService.initMeshService(_userId!);
       _isCoreInitialized = true;
     } else {
@@ -85,6 +103,7 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
   @override
   void dispose() {
+    _permissionsProvider.removeListener(_onPermissionsChanged);
     _isServiceStateSubscription?.cancel();
     _messagesSubscription?.cancel();
 

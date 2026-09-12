@@ -70,6 +70,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   bool _autoScrollLog = true;
   bool _isMeshServiceState = false;
 
+  bool get canStart => _bleMeshServiceProvider.canStart;
   UserRoleViewModel get role => _role;
   List<String> get logMessages => _logMessages;
   List<String> get attendedStudents => _attendedStudents;
