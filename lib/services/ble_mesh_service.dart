@@ -3,63 +3,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart'
     show MethodChannel, PlatformException, MissingPluginException, EventChannel;
 
-import 'package:ats/models/models.dart' show Message;
-
-enum Permissions {
-  notImplemented,
-  bluetooth,
-  bluetoothAdmin,
-  bluetoothScan,
-  bluetoothConnect,
-  bluetoothAdvertise,
-  accessFineLocation,
-  accessCoarseLocation,
-  postNotifications;
-
-  static Permissions fromChannelValue(String? value) {
-    return value == null
-        ? Permissions.notImplemented
-        : Permissions.values.firstWhere(
-            (e) => e.name.toLowerCase() == value.toLowerCase(),
-            orElse: () => Permissions.notImplemented,
-          );
-  }
-}
-
-class PermissionInfo {
-  final Permissions name;
-  final bool granted;
-  final bool required;
-
-  PermissionInfo({
-    required this.name,
-    required this.granted,
-    required this.required,
-  });
-
-  factory PermissionInfo.fromMap(String name, Map<dynamic, dynamic> map) {
-    return PermissionInfo(
-      name: Permissions.fromChannelValue(name),
-      granted: map['granted'] ?? false,
-      required: map['required'] ?? false,
-    );
-  }
-}
-
-enum SendResult {
-  notImplemented,
-  success,
-  error;
-
-  static SendResult fromChannelValue(String? value) {
-    return value == null
-        ? SendResult.error
-        : SendResult.values.firstWhere(
-            (e) => e.name.toLowerCase() == value.toLowerCase(),
-            orElse: () => SendResult.error,
-          );
-  }
-}
+import 'package:ats/models/models.dart' show DeliveryStatus, Message;
 
 class BleMeshService {
   static const platformMethods = MethodChannel(
@@ -74,15 +18,15 @@ class BleMeshService {
   static const EventChannel _eventChannelServiceState = EventChannel(
     'ru.yzhjdjq.ats.platform_events/service_state',
   );
-  static Stream<String>? _eventReceivedMessageStream;
+  static Stream<Message>? _eventReceivedMessageStream;
   static Stream<bool>? _eventServiceStateStream;
 
-  static Stream<String> get receiveMessageEvents {
+  static Stream<Message> get receiveMessageEvents {
     return _eventReceivedMessageStream ??=
-        _InvokePlatformMethods._receiveBroadcastStream(
+        _InvokePlatformMethods._receiveBroadcastStream<Map<dynamic, dynamic>>(
           _eventChannelReceiveMessage,
           'received messages',
-        );
+        ).map((raw) => Message.fromMap(Map<String, dynamic>.from(raw)));
   }
 
   static Stream<bool> get serviceStateEvents {
@@ -135,15 +79,15 @@ class BleMeshService {
         0;
   }
 
-  static Future<SendResult> sendMessage(String message) async {
-    return SendResult.fromChannelValue(
+  static Future<DeliveryStatus> sendMessage(Message message) async {
+    return DeliveryStatus.fromChannelValue(
       await _InvokePlatformMethods._invokeMethod<String?>(
             platformMethods,
             'sendMessage',
-            args: message,
-            onDefaultErrorResult: () => SendResult.notImplemented.name,
+            args: message.toMap(),
+            onDefaultErrorResult: () => DeliveryStatus.notImplemented.name,
           ) ??
-          SendResult.notImplemented.name,
+          DeliveryStatus.notImplemented.name,
     );
   }
 }

@@ -91,15 +91,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нажмите кнопку для отметки посещаемости';
 
   @override
-  String mark_visit_start_poll(Object delay) {
-    return 'Начать опрос ($delay сек)';
-  }
+  String get mark_visit_start_poll => 'Провести опрос';
 
   @override
   String get mark_visit_mark_attendance => 'Отметиться';
-
-  @override
-  String get mark_visit_poll_active => 'Опрос активен... Ожидание ответов';
 
   @override
   String get mark_visit_attended => 'Отметившиеся';

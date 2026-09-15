@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 
 class MarkVisitActionButtonWidget extends StatelessWidget {
   final UserRoleViewModel role;
-  final bool isPollActive;
   final bool hasError;
   final VoidCallback onPressed;
 
   const MarkVisitActionButtonWidget({
     super.key,
     required this.role,
-    required this.isPollActive,
     required this.hasError,
     required this.onPressed,
   });
@@ -34,7 +32,7 @@ class MarkVisitActionButtonWidget extends StatelessWidget {
         ),
         child: Text(
           role == UserRoleViewModel.teacher
-              ? '📢 ${S.of(context).mark_visit_start_poll(10)}'
+              ? '📢 ${S.of(context).mark_visit_start_poll}'
               : '✅ ${S.of(context).mark_visit_mark_attendance}',
         ),
       ),

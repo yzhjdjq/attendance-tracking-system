@@ -1,6 +1,6 @@
 import 'package:ats/pages/pages.dart' show PermissionsPage;
 import 'package:ats/providers/providers.dart'
-    show MarkVisitPageProvider, SendResultViewModel, UserRoleViewModel;
+    show DeliveryStatusViewModel, MarkVisitPageProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/widgets/widgets.dart'
     show
@@ -144,19 +144,10 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         // Кнопка действия
                         MarkVisitActionButtonWidget(
                           role: provider.role,
-                          isPollActive: provider.isPollActive,
                           hasError: provider.errorMessage != null,
                           onPressed: () =>
                               _handlePrimaryButtonClick(context, provider),
                         ),
-
-                        // Статус опроса
-                        if (provider.role == UserRoleViewModel.teacher &&
-                            provider.isPollActive)
-                          const SizedBox(height: 16),
-                        if (provider.role == UserRoleViewModel.teacher &&
-                            provider.isPollActive)
-                          const _PollStatusCard(),
 
                         // Список отметившихся
                         if (provider.role == UserRoleViewModel.teacher &&
@@ -234,36 +225,21 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       return;
     }
 
+    late final DeliveryStatusViewModel status;
+
     if (provider.role == UserRoleViewModel.teacher) {
       provider.addLog('📢 ${S.of(context).poll_started}');
+      status = await provider.sendMessage(provider.buildPollMessage());
     } else {
       provider.addLog('📤 ${S.of(context).attendance_marked_mesh_sent}...');
+      status = await provider.sendMessage(provider.buildAttendMessage());
     }
 
-    provider
-        .sendMessage('HELLO')
-        .then(
-          (value) => {
-            provider.addLog(switch (value) {
-              SendResultViewModel.notImplemented => 'Не реализовано',
-              SendResultViewModel.success => 'Успешно',
-              SendResultViewModel.error => 'Ошибка',
-            }),
-          },
-        );
-  }
-}
-
-class _PollStatusCard extends StatelessWidget {
-  const _PollStatusCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      label: Text('⏳ ${S.of(context).mark_visit_poll_active}'),
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    );
+    provider.addLog(switch (status) {
+      DeliveryStatusViewModel.notImplemented => 'Не реализовано',
+      DeliveryStatusViewModel.success => 'Успешно',
+      DeliveryStatusViewModel.error => 'Ошибка',
+    });
   }
 }
 

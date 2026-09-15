@@ -1,10 +1,12 @@
 import 'dart:async' show StreamSubscription;
 
-import 'package:ats/models/models.dart' show UserRole;
+import 'package:ats/models/models.dart'
+    show DeliveryStatus, Message, MessageType, UserRole, TextPayload;
 import 'package:ats/providers/providers.dart' show BleMeshServiceProvider;
-import 'package:ats/services/services.dart' show BleMeshService, SendResult;
+import 'package:ats/services/services.dart' show BleMeshService;
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
+import 'package:uuid/uuid.dart' show Uuid;
 
 enum UserRoleViewModel {
   teacher,
@@ -19,16 +21,18 @@ enum UserRoleViewModel {
   }
 }
 
-enum SendResultViewModel {
+enum DeliveryStatusViewModel {
   notImplemented,
   success,
   error;
 
-  static SendResultViewModel fromSendResult(SendResult result) {
+  static DeliveryStatusViewModel fromDeliveryStatus(DeliveryStatus result) {
     return switch (result) {
-      SendResult.notImplemented => SendResultViewModel.notImplemented,
-      SendResult.success => SendResultViewModel.success,
-      SendResult.error => SendResultViewModel.error,
+      DeliveryStatus.notImplemented => DeliveryStatusViewModel.notImplemented,
+      DeliveryStatus.sending ||
+      DeliveryStatus.sent ||
+      DeliveryStatus.delivered => DeliveryStatusViewModel.success,
+      DeliveryStatus.failed => DeliveryStatusViewModel.error,
     };
   }
 }
@@ -60,21 +64,20 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   late final BleMeshServiceProvider _bleMeshServiceProvider;
 
   StreamSubscription<bool>? _meshServiceStateSubscription;
-  StreamSubscription<String>? _messagesSubscription;
+  StreamSubscription<Message>? _messagesSubscription;
 
   UserRoleViewModel _role = UserRoleViewModel.student;
   List<String> _logMessages = [];
   List<String> _attendedStudents = [];
-  bool _isPollActive = false;
   String? _errorMessage;
   bool _autoScrollLog = true;
   bool _isMeshServiceState = false;
+  static const _uuid = Uuid();
 
   bool get canStart => _bleMeshServiceProvider.canStart;
   UserRoleViewModel get role => _role;
   List<String> get logMessages => _logMessages;
   List<String> get attendedStudents => _attendedStudents;
-  bool get isPollActive => _isPollActive;
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
   String get userId => _bleMeshServiceProvider.userId ?? '';
@@ -82,6 +85,9 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       await _bleMeshServiceProvider.getDirectConnectionsCount();
 
   void subscribeToMeshServiceState() {
+    _bleMeshServiceProvider.isMeshServiceRunning.then(
+      (state) => {_isMeshServiceState = state},
+    );
     _meshServiceStateSubscription = _bleMeshServiceProvider.serviceState.listen(
       (newState) {
         if (_isMeshServiceState != newState) {
@@ -94,8 +100,22 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   void subscribeToReceiveMessage() {
     _messagesSubscription = _bleMeshServiceProvider.messages.listen((message) {
-      _logMessages.add(message);
-      notifyListeners();
+      addLog(_formatMessage(message));
+
+      if (message.messageType == MessageType.attend &&
+          message.originalSenderId != _bleMeshServiceProvider.userId &&
+          _bleMeshServiceProvider.userId != null) {
+        if (!_attendedStudents.contains(message.originalSenderId)) {
+          _attendedStudents = [..._attendedStudents, message.originalSenderId];
+          notifyListeners();
+        }
+      }
+
+      if (message.messageType == MessageType.poll &&
+          message.originalSenderId != _bleMeshServiceProvider.userId &&
+          _bleMeshServiceProvider.userId != null) {
+        _sendAttendResponse(message.originalSenderId);
+      }
     });
   }
 
@@ -111,14 +131,16 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     notifyListeners();
   }
 
-  void setIsPollActive(bool value) {
-    _isPollActive = value;
+  void addLog(String message) {
+    final timestamp = DateTime.now().toString();
+    _logMessages = (_logMessages + ['[$timestamp] $message'])
+        .take(120)
+        .toList();
     notifyListeners();
   }
 
-  void addLog(String message) {
-    final timestamp = DateTime.now().toString();
-    _logMessages = (_logMessages + ['[$timestamp] $message']).take(50).toList();
+  void addLogRaw(String message) {
+    _logMessages = (_logMessages + [message]).take(120).toList();
     notifyListeners();
   }
 
@@ -142,8 +164,8 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     notifyListeners();
   }
 
-  Future<SendResultViewModel> sendMessage(String message) async {
-    return SendResultViewModel.fromSendResult(
+  Future<DeliveryStatusViewModel> sendMessage(Message message) async {
+    return DeliveryStatusViewModel.fromDeliveryStatus(
       await BleMeshService.sendMessage(message),
     );
   }
@@ -151,7 +173,98 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   void startService() {
     if (_bleMeshServiceProvider.userId != null) {
       BleMeshService.initMeshService(_bleMeshServiceProvider.userId!);
+      Future.delayed(
+        Duration(milliseconds: 700),
+        () => {
+          if (_isMeshServiceState == false)
+            {
+              _bleMeshServiceProvider.isMeshServiceRunning.then(
+                (state) => {_isMeshServiceState = state},
+              ),
+            },
+        },
+      );
     }
+  }
+
+  String _formatMessage(Message message) {
+    final ts = message.timestamp.toLocal();
+    final time =
+        '${ts.hour.toString().padLeft(2, '0')}:'
+        '${ts.minute.toString().padLeft(2, '0')}:'
+        '${ts.second.toString().padLeft(2, '0')}';
+
+    return switch (message.messageType) {
+      MessageType.attend =>
+        '📋 ATTEND from ${message.originalSenderId} at $time',
+      MessageType.poll => '📋 POLL from ${message.originalSenderId} at $time',
+      MessageType.text =>
+        '💬 TEXT from ${message.originalSenderId} at $time: '
+            '${(message.payload as TextPayload).text}',
+    };
+  }
+
+  String _formatOutgoing(Message message, DeliveryStatus status) {
+    final ts = message.timestamp.toLocal();
+    final time =
+        '${ts.hour.toString().padLeft(2, '0')}:'
+        '${ts.minute.toString().padLeft(2, '0')}:'
+        '${ts.second.toString().padLeft(2, '0')}';
+
+    final statusLabel = switch (status) {
+      DeliveryStatus.notImplemented => '❌ не реализовано',
+      DeliveryStatus.sending => '⏳ отправляется',
+      DeliveryStatus.sent => '✅ отправлено',
+      DeliveryStatus.delivered => '✅ доставлено',
+      DeliveryStatus.failed => '❌ ошибка',
+    };
+
+    return switch (message.messageType) {
+      MessageType.attend =>
+        '📤 ATTEND → ${message.recipientId ?? "everyone"} at $time [$statusLabel]',
+      MessageType.poll => '📤 POLL → everyone at $time [$statusLabel]',
+      MessageType.text =>
+        '📤 TEXT → ${message.recipientId ?? "everyone"} at $time [$statusLabel]: '
+            '${(message.payload as TextPayload).text}',
+    };
+  }
+
+  Future<void> _sendAttendResponse(String teacherId) async {
+    final message = buildAttendMessage(recipientId: teacherId);
+    final status = await _bleMeshServiceProvider.sendMessage(message);
+
+    addLogRaw(_formatOutgoing(message, status));
+  }
+
+  Message buildAttendMessage({String? recipientId}) {
+    return Message(
+      id: _uuid.v4(),
+      originalSenderId: userId,
+      recipientId: recipientId,
+      messageType: MessageType.attend,
+      timestamp: DateTime.now().toUtc(),
+      payload: null,
+    );
+  }
+
+  Message buildPollMessage() {
+    return Message(
+      id: _uuid.v4(),
+      originalSenderId: userId,
+      messageType: MessageType.poll,
+      timestamp: DateTime.now().toUtc(),
+      payload: null,
+    );
+  }
+
+  Message buildTextMessage(String text) {
+    return Message(
+      id: _uuid.v4(),
+      originalSenderId: userId,
+      messageType: MessageType.text,
+      timestamp: DateTime.now().toUtc(),
+      payload: TextPayload(text),
+    );
   }
 
   @override

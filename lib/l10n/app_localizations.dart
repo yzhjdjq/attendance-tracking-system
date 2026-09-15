@@ -253,20 +253,14 @@ abstract class AppLocalizations {
   /// No description provided for @mark_visit_start_poll.
   ///
   /// In ru, this message translates to:
-  /// **'Начать опрос ({delay} сек)'**
-  String mark_visit_start_poll(Object delay);
+  /// **'Провести опрос'**
+  String get mark_visit_start_poll;
 
   /// No description provided for @mark_visit_mark_attendance.
   ///
   /// In ru, this message translates to:
   /// **'Отметиться'**
   String get mark_visit_mark_attendance;
-
-  /// No description provided for @mark_visit_poll_active.
-  ///
-  /// In ru, this message translates to:
-  /// **'Опрос активен... Ожидание ответов'**
-  String get mark_visit_poll_active;
 
   /// No description provided for @mark_visit_attended.
   ///

@@ -1,5 +1,6 @@
 import 'dart:async' show StreamController, StreamSubscription;
 
+import 'package:ats/models/models.dart' show DeliveryStatus, Message;
 import 'package:ats/providers/providers.dart'
     show PermissionsProvider, SingletonMixin;
 import 'package:ats/services/ble_mesh_service.dart';
@@ -49,14 +50,16 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   StreamSubscription<bool>? _isServiceStateSubscription;
   final StreamController<bool> _isServiceState =
       StreamController<bool>.broadcast();
-  StreamSubscription<String>? _messagesSubscription;
-  final StreamController<String> _messages =
-      StreamController<String>.broadcast();
+  final StreamController<Message> _messages =
+      StreamController<Message>.broadcast();
+  StreamSubscription<Message>? _messagesSubscription;
 
   void _enableEventSubscriptions() {
     _messagesSubscription?.cancel();
-    _messagesSubscription = BleMeshService.receiveMessageEvents.listen((event) {
-      _messages.add(event);
+    _messagesSubscription = BleMeshService.receiveMessageEvents.listen((
+      message,
+    ) {
+      _messages.add(message);
     });
   }
 
@@ -78,8 +81,11 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
   String? get userId => _userId;
 
-  Stream<String> get messages => _messages.stream;
+  Stream<Message> get messages => _messages.stream;
   Stream<bool> get serviceState => _isServiceState.stream;
+
+  Future<bool> get isMeshServiceRunning async =>
+      await BleMeshService.isMeshForegroundServiceRunning();
 
   void setUserId(String? userId) {
     _userId = userId;
@@ -98,7 +104,7 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   Future<int> getDirectConnectionsCount() async =>
       await BleMeshService.getNumberOfNetworkMembers();
 
-  Future<SendResult> sendMessage(String message) async =>
+  Future<DeliveryStatus> sendMessage(Message message) async =>
       await BleMeshService.sendMessage(message);
 
   @override

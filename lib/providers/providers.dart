@@ -4,9 +4,9 @@ export 'model_providers/model_providers.dart' show UserProvider;
 
 export 'page_providers/page_providers.dart'
     show
+        DeliveryStatusViewModel,
         LoginPageProvider,
         MarkVisitPageProvider,
-        SendResultViewModel,
         UserRoleViewModel;
 
 export 'service_providers/service_providers.dart'
