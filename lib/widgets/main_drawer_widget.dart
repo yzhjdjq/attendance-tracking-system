@@ -78,21 +78,25 @@ class _MainDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 180,
-      child: DrawerHeader(
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(color: theme.colorScheme.primary),
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              backgroundColor: theme.colorScheme.secondaryContainer,
               radius: 30,
               child: Text(
                 S.of(context).appNameShort,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  color: theme.colorScheme.onSecondaryContainer,
                 ),
               ),
             ),
@@ -100,17 +104,9 @@ class _MainDrawerHeader extends StatelessWidget {
             Text(
               S.of(context).appName,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: theme.colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              'version code',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 12,
               ),
             ),
           ],
