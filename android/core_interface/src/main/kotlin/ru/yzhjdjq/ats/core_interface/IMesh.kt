@@ -44,11 +44,14 @@ interface IMesh {
   fun receiveMessageFlow(): Flow<Map<String, Any?>>
 
   /**
-   * Возвращает количество участников сети.
-   *
-   * На текущий момент — количество прямых BLE-соединений.
+   * Возвращает количество соседних участников сети.
    */
-  fun getNumberOfNetworkMembers(): Int
+  fun getNumberOfNeighboringNetworkMembers(): Int
+
+  /**
+   * Возвращает поток количества соседних участников сети.
+   */
+  fun neighboringNetworkMembersFlow(): Flow<Int>
 
   /**
    * Отправляет сообщение по BLE Mesh.
@@ -76,7 +79,9 @@ class StubMesh : IMesh {
 
   override fun receiveMessageFlow(): Flow<Map<String, Any?>> = flowOf()
 
-  override fun getNumberOfNetworkMembers(): Int = 0
+  override fun getNumberOfNeighboringNetworkMembers(): Int = 0
+
+  override fun neighboringNetworkMembersFlow(): Flow<Int> = flowOf()
 
   override fun sendMessage(message: Map<String, Any?>): DeliveryStatus =
     DeliveryStatus.NOT_IMPLEMENTED

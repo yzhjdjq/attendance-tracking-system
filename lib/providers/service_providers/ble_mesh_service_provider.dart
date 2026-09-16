@@ -47,12 +47,15 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   String? _userId;
 
   bool _isCoreInitialized = false;
-  StreamSubscription<bool>? _isServiceStateSubscription;
   final StreamController<bool> _isServiceState =
       StreamController<bool>.broadcast();
+  StreamSubscription<bool>? _isServiceStateSubscription;
   final StreamController<Message> _messages =
       StreamController<Message>.broadcast();
   StreamSubscription<Message>? _messagesSubscription;
+  final StreamController<int> _neighboringMembers =
+      StreamController<int>.broadcast();
+  StreamSubscription<int>? _neighboringMembersSubscription;
 
   void _enableEventSubscriptions() {
     _messagesSubscription?.cancel();
@@ -61,11 +64,20 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
     ) {
       _messages.add(message);
     });
+
+    _neighboringMembersSubscription?.cancel();
+    _neighboringMembersSubscription = BleMeshService.neighboringMembersEvents
+        .listen((count) {
+          _neighboringMembers.add(count);
+        });
   }
 
   void _disableEventSubscriptions() {
     _messagesSubscription?.cancel();
     _messagesSubscription = null;
+
+    _neighboringMembersSubscription?.cancel();
+    _neighboringMembersSubscription = null;
   }
 
   void _onPermissionsChanged() {
@@ -81,8 +93,9 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
   String? get userId => _userId;
 
-  Stream<Message> get messages => _messages.stream;
   Stream<bool> get serviceState => _isServiceState.stream;
+  Stream<Message> get messages => _messages.stream;
+  Stream<int> get neighboringMembers => _neighboringMembers.stream;
 
   Future<bool> get isMeshServiceRunning async =>
       await BleMeshService.isMeshForegroundServiceRunning();
@@ -112,6 +125,7 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
     _permissionsProvider.removeListener(_onPermissionsChanged);
     _isServiceStateSubscription?.cancel();
     _messagesSubscription?.cancel();
+    _neighboringMembersSubscription?.cancel();
 
     super.dispose();
   }

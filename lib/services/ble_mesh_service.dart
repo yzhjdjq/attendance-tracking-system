@@ -18,8 +18,12 @@ class BleMeshService {
   static const EventChannel _eventChannelServiceState = EventChannel(
     'ru.yzhjdjq.ats.platform_events/service_state',
   );
+  static const EventChannel _eventChannelNeighboringMembers = EventChannel(
+    'ru.yzhjdjq.ats.platform_events/neighboring_members',
+  );
   static Stream<Message>? _eventReceivedMessageStream;
   static Stream<bool>? _eventServiceStateStream;
+  static Stream<int>? _eventNeighboringMembersStream;
 
   static Stream<Message> get receiveMessageEvents {
     return _eventReceivedMessageStream ??=
@@ -34,6 +38,14 @@ class BleMeshService {
         _InvokePlatformMethods._receiveBroadcastStream(
           _eventChannelServiceState,
           'service state changes',
+        );
+  }
+
+  static Stream<int> get neighboringMembersEvents {
+    return _eventNeighboringMembersStream ??=
+        _InvokePlatformMethods._receiveBroadcastStream<int>(
+          _eventChannelNeighboringMembers,
+          'neighboring members count',
         );
   }
 
@@ -73,7 +85,7 @@ class BleMeshService {
   static Future<int> getNumberOfNetworkMembers() async {
     return await _InvokePlatformMethods._invokeMethod<int>(
           platformMethods,
-          'getNumberOfNetworkMembers',
+          'getNumberOfNeighboringNetworkMembers',
           onDefaultErrorResult: () => 0,
         ) ??
         0;

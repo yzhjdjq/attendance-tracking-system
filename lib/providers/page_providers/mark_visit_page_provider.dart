@@ -51,6 +51,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
     SingletonMixin.registerInstance(this);
     subscribeToMeshServiceState();
     subscribeToReceiveMessage();
+    subscribeToNeighboringMembers();
   }
 
   static bool get isInitialized =>
@@ -61,7 +62,9 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   StreamSubscription<bool>? _meshServiceStateSubscription;
   StreamSubscription<Message>? _messagesSubscription;
+  StreamSubscription<int>? _neighboringMembersSubscription;
 
+  int _neighboringMembersCount = 0;
   List<String> _logMessages = [];
   final Map<String, String> _attendedStudents = {};
   String? _errorMessage;
@@ -76,8 +79,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
   String get userId => _userProvider.username ?? '';
-  Future<int> getDirectConnectionsCount() async =>
-      await _bleMeshServiceProvider.getDirectConnectionsCount();
+  int get neighboringMembersCount => _neighboringMembersCount;
 
   void subscribeToMeshServiceState() {
     _bleMeshServiceProvider.isMeshServiceRunning.then(
@@ -117,6 +119,16 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
         _sendAttendResponse(message.originalSenderId);
       }
     });
+  }
+
+  void subscribeToNeighboringMembers() {
+    _neighboringMembersSubscription?.cancel();
+    _neighboringMembersSubscription = _bleMeshServiceProvider.neighboringMembers
+        .listen((count) {
+          if (_neighboringMembersCount == count) return;
+          _neighboringMembersCount = count;
+          notifyListeners();
+        });
   }
 
   bool isMeshServiceRunning() => _isMeshServiceState;
@@ -183,11 +195,12 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
         '${ts.hour.toString().padLeft(2, '0')}:'
         '${ts.minute.toString().padLeft(2, '0')}:'
         '${ts.second.toString().padLeft(2, '0')}';
-    final textPayload = message.payload is TextPayload ? (message.payload as TextPayload).text : '';
+    final textPayload = message.payload is TextPayload
+        ? (message.payload as TextPayload).text
+        : '';
 
     return switch (message.messageType) {
-      MessageType.attend =>
-        '📋 ATTEND from $textPayload at $time',
+      MessageType.attend => '📋 ATTEND from $textPayload at $time',
       MessageType.poll => '📋 POLL from ${message.originalSenderId} at $time',
       MessageType.text =>
         '💬 TEXT from ${message.originalSenderId} at $time: '
@@ -222,7 +235,9 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   Future<void> _sendAttendResponse(String teacherId) async {
     final message = buildAttendMessage(
-      fullName: _userProvider.fullName ?? userId, recipientId: teacherId);
+      fullName: _userProvider.fullName ?? userId,
+      recipientId: teacherId,
+    );
     final status = await _bleMeshServiceProvider.sendMessage(message);
 
     addLogRaw(_formatOutgoing(message, status));
@@ -275,6 +290,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   void dispose() {
     _messagesSubscription?.cancel();
     _meshServiceStateSubscription?.cancel();
+    _neighboringMembersSubscription?.cancel();
     super.dispose();
   }
 }

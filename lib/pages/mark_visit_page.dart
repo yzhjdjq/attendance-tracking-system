@@ -107,19 +107,9 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                           const SizedBox(height: 16),
 
                         // Счетчик прямых BLE подключений
-                        FutureBuilder(
-                          future: provider.getDirectConnectionsCount(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            }
-                            return ConnectionsCardWidget(
-                              directConnectionsCount: snapshot.hasData
-                                  ? snapshot.data!
-                                  : 0,
-                            );
-                          },
+                        ConnectionsCardWidget(
+                          directConnectionsCount:
+                              provider.neighboringMembersCount,
                         ),
 
                         const SizedBox(height: 16),
@@ -216,8 +206,11 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       status = await provider.sendMessage(provider.buildPollMessage());
     } else {
       provider.addLog('📤 ${S.of(context).attendance_marked_mesh_sent}...');
-      final fullnameOrUserId = context.read<UserProvider>().fullName ?? provider.userId;
-      status = await provider.sendMessage(provider.buildAttendMessage(fullName: fullnameOrUserId));
+      final fullnameOrUserId =
+          context.read<UserProvider>().fullName ?? provider.userId;
+      status = await provider.sendMessage(
+        provider.buildAttendMessage(fullName: fullnameOrUserId),
+      );
     }
 
     provider.addLog(switch (status) {
