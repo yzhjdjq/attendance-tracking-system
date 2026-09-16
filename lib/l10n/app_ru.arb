@@ -70,7 +70,7 @@
   "attendance_export_subject_label": "Предмет",
   "attendance_export_group_required": "Укажите группу",
   "attendance_export_subject_required": "Укажите предмет",
-  "attendance_export_date_auto_note": "подставлена автоматически",
+  "attendance_export_date_auto_note": "Дата будет подставлена автоматически",
   "attendance_export_copy_action": "Скопировать",
   "attendance_export_save_action": "Сохранить",
   "attendance_export_cancel": "Отмена",

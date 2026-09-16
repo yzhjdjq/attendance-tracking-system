@@ -439,7 +439,7 @@ abstract class AppLocalizations {
   /// No description provided for @attendance_export_date_auto_note.
   ///
   /// In ru, this message translates to:
-  /// **'подставлена автоматически'**
+  /// **'Дата будет подставлена автоматически'**
   String get attendance_export_date_auto_note;
 
   /// No description provided for @attendance_export_copy_action.

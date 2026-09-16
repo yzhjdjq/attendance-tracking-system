@@ -186,7 +186,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get attendance_export_subject_required => 'Укажите предмет';
 
   @override
-  String get attendance_export_date_auto_note => 'подставлена автоматически';
+  String get attendance_export_date_auto_note =>
+      'Дата будет подставлена автоматически';
 
   @override
   String get attendance_export_copy_action => 'Скопировать';
