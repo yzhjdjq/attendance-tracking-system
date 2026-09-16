@@ -63,7 +63,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   StreamSubscription<Message>? _messagesSubscription;
 
   List<String> _logMessages = [];
-  List<String> _attendedStudents = [];
+  final Map<String, String> _attendedStudents = {};
   String? _errorMessage;
   bool _autoScrollLog = true;
   bool _isMeshServiceState = false;
@@ -72,7 +72,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   bool get canStart => _bleMeshServiceProvider.canStart;
   UserRoleViewModel get role => _userProvider.roleOrStudent;
   List<String> get logMessages => _logMessages;
-  List<String> get attendedStudents => _attendedStudents;
+  List<String> get attendedStudents => _attendedStudents.values.toList();
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
   String get userId => _userProvider.username ?? '';
@@ -100,8 +100,13 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       if (message.messageType == MessageType.attend &&
           message.originalSenderId != _bleMeshServiceProvider.userId &&
           _bleMeshServiceProvider.userId != null) {
-        if (!_attendedStudents.contains(message.originalSenderId)) {
-          _attendedStudents = [..._attendedStudents, message.originalSenderId];
+        final senderId = message.originalSenderId;
+        if (!_attendedStudents.containsKey(senderId)) {
+          final fullName = switch (message.payload) {
+            TextPayload(:final text) => text,
+            _ => senderId,
+          };
+          _attendedStudents[senderId] = fullName;
           notifyListeners();
         }
       }
@@ -115,11 +120,6 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   }
 
   bool isMeshServiceRunning() => _isMeshServiceState;
-
-  void setAttendedStudents(List<String> students) {
-    _attendedStudents = students;
-    notifyListeners();
-  }
 
   void addLog(String message) {
     final timestamp = DateTime.now().toString();
@@ -183,10 +183,11 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
         '${ts.hour.toString().padLeft(2, '0')}:'
         '${ts.minute.toString().padLeft(2, '0')}:'
         '${ts.second.toString().padLeft(2, '0')}';
+    final textPayload = message.payload is TextPayload ? (message.payload as TextPayload).text : '';
 
     return switch (message.messageType) {
       MessageType.attend =>
-        '📋 ATTEND from ${message.originalSenderId} at $time',
+        '📋 ATTEND from $textPayload at $time',
       MessageType.poll => '📋 POLL from ${message.originalSenderId} at $time',
       MessageType.text =>
         '💬 TEXT from ${message.originalSenderId} at $time: '
@@ -220,20 +221,21 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   }
 
   Future<void> _sendAttendResponse(String teacherId) async {
-    final message = buildAttendMessage(recipientId: teacherId);
+    final message = buildAttendMessage(
+      fullName: _userProvider.fullName ?? userId, recipientId: teacherId);
     final status = await _bleMeshServiceProvider.sendMessage(message);
 
     addLogRaw(_formatOutgoing(message, status));
   }
 
-  Message buildAttendMessage({String? recipientId}) {
+  Message buildAttendMessage({required String fullName, String? recipientId}) {
     return Message(
       id: _uuid.v4(),
       originalSenderId: userId,
       recipientId: recipientId,
       messageType: MessageType.attend,
       timestamp: DateTime.now().toUtc(),
-      payload: null,
+      payload: TextPayload(fullName),
     );
   }
 
@@ -265,7 +267,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       groupName: groupName,
       subject: subject,
       date: DateTime.now(),
-      students: List.unmodifiable(_attendedStudents),
+      students: List.unmodifiable(_attendedStudents.values),
     );
   }
 

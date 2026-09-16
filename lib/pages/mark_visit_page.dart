@@ -216,7 +216,8 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
       status = await provider.sendMessage(provider.buildPollMessage());
     } else {
       provider.addLog('📤 ${S.of(context).attendance_marked_mesh_sent}...');
-      status = await provider.sendMessage(provider.buildAttendMessage());
+      final fullnameOrUserId = context.read<UserProvider>().fullName ?? provider.userId;
+      status = await provider.sendMessage(provider.buildAttendMessage(fullName: fullnameOrUserId));
     }
 
     provider.addLog(switch (status) {

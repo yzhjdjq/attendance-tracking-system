@@ -67,7 +67,7 @@ class Message {
 
   bool get isValid {
     return switch (messageType) {
-      MessageType.attend => payload == null,
+      MessageType.attend => payload is TextPayload,
       MessageType.poll => payload == null,
       MessageType.text => payload is TextPayload,
     };
@@ -117,9 +117,7 @@ class Message {
   ) {
     return switch (type) {
       MessageType.text => TextPayload(map['text'] as String),
-      MessageType.attend => throw StateError(
-        'MessageType::attend must not carry a payload',
-      ),
+      MessageType.attend => TextPayload(map['text'] as String),
       MessageType.poll => throw StateError(
         'MessageType::poll must not carry a payload',
       ),
