@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ats/providers/providers.dart' show UserProvider;
+import 'package:ats/providers/providers.dart'
+    show UserProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/pages/pages.dart'
     show HomePage, LoginPage, MarkVisitPage, SettingsPage;
 
 class MainDrawerWidget extends StatelessWidget {
-  const MainDrawerWidget({super.key});
+  final UserRoleViewModel _role;
+
+  const MainDrawerWidget({super.key, required this._role});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class MainDrawerWidget extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const _MainDrawerHeader(),
+          _MainDrawerHeader(role: _role),
           _buildDrawerItem(
             icon: Icons.home,
             title: S.of(context).home_page_title,
@@ -74,7 +77,9 @@ class MainDrawerWidget extends StatelessWidget {
 }
 
 class _MainDrawerHeader extends StatelessWidget {
-  const _MainDrawerHeader();
+  final UserRoleViewModel _role;
+
+  const _MainDrawerHeader({required this._role});
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +112,15 @@ class _MainDrawerHeader extends StatelessWidget {
                 color: theme.colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${S.of(context).mark_visit_role_selected}: ${_role == UserRoleViewModel.teacher ? S.of(context).mark_visit_role_teacher : S.of(context).mark_visit_role_student}',
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ],

@@ -1,8 +1,10 @@
-import 'package:ats/providers/providers.dart' show LoginPageProvider;
-import 'package:ats/services/services.dart' show S;
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart' show ReadContext;
 import 'package:ats/pages/pages.dart' show HomePage;
+import 'package:ats/providers/providers.dart' show LoginPageProvider, LoginMode;
+import 'package:ats/services/services.dart' show S;
+import 'package:ats/l10n/extensions/extensions.dart'
+    show AuthFailureReasonL10nExtension;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,52 +14,58 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _loginController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  String? _errorMessage;
+  final _loginController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _fullNameController = TextEditingController();
 
   @override
   void dispose() {
     _loginController.dispose();
     _passwordController.dispose();
+    _fullNameController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
-    final login = _loginController.text.trim();
-    final password = _passwordController.text;
+  Future<void> _submit() async {
+    final provider = context.read<LoginPageProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
-    if (login.isEmpty) {
-      setState(() {
-        _errorMessage = S.of(context).enter_login_message;
-      });
-      return;
+    final bool success;
+    if (provider.mode == LoginMode.teacher) {
+      success = await provider.submitTeacherLogin(
+        login: _loginController.text,
+        password: _passwordController.text,
+      );
+    } else {
+      success = await provider.submitStudentRegistration(
+        fullName: _fullNameController.text,
+      );
     }
 
-    try {
-      context.read<LoginPageProvider>().authorize(login, password);
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = S.of(context).authorize_error_message;
-        });
-      }
-    }
-  }
+    if (!mounted) return;
 
-  Future<void> _onEnterPressed() async {
-    await _handleLogin();
+    if (success) {
+      navigator.pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } else {
+      final failure = provider.lastFailure;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            failure?.message(context) ?? S.of(context).authorize_error_message,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<LoginPageProvider>();
     final theme = Theme.of(context);
+    final isTeacherMode = provider.mode == LoginMode.teacher;
 
     return Scaffold(
       body: Container(
@@ -75,8 +83,8 @@ class _LoginPageState extends State<LoginPage> {
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
                 child: Container(
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
@@ -89,10 +97,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(32.0),
+                  padding: const EdgeInsets.all(32),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
+                    children: [
                       Text(
                         S.of(context).authorize,
                         style: theme.textTheme.headlineMedium?.copyWith(
@@ -100,65 +108,90 @@ class _LoginPageState extends State<LoginPage> {
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
+                      const SizedBox(height: 24),
 
-                      const SizedBox(height: 32),
-
-                      _buildTextField(
-                        context: context,
-                        controller: _loginController,
-                        labelText: S.of(context).login,
-                        prefixIcon: Icons.person,
-                        keyboardType: TextInputType.text,
-                        theme: theme,
+                      SegmentedButton<LoginMode>(
+                        segments: [
+                          ButtonSegment(
+                            value: LoginMode.teacher,
+                            label: Text(S.of(context).login_mode_teacher),
+                            icon: const Icon(Icons.school),
+                          ),
+                          ButtonSegment(
+                            value: LoginMode.student,
+                            label: Text(S.of(context).login_mode_student),
+                            icon: const Icon(Icons.person_outline),
+                          ),
+                        ],
+                        selected: {provider.mode},
+                        onSelectionChanged: (set) {
+                          provider.setMode(set.first);
+                        },
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
-                      _buildTextField(
-                        context: context,
-                        controller: _passwordController,
-                        labelText: S.of(context).password,
-                        prefixIcon: Icons.lock,
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
-                        theme: theme,
-                      ),
-
-                      if (_errorMessage != null) ...[
+                      if (isTeacherMode) ...[
+                        _buildTextField(
+                          controller: _loginController,
+                          labelText: S.of(context).login,
+                          prefixIcon: Icons.person,
+                          theme: theme,
+                        ),
                         const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.errorContainer,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                color: theme.colorScheme.onErrorContainer,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _errorMessage!,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onErrorContainer,
-                                  ),
-                                ),
-                              ),
-                            ],
+                        _buildTextField(
+                          controller: _passwordController,
+                          labelText: S.of(context).password,
+                          prefixIcon: Icons.lock,
+                          obscureText: true,
+                          theme: theme,
+                        ),
+                      ] else ...[
+                        _buildTextField(
+                          controller: _fullNameController,
+                          labelText: S.of(context).full_name,
+                          prefixIcon: Icons.badge_outlined,
+                          theme: theme,
+                          textInputAction: TextInputAction.done,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Сессионный вход. Данные будут сброшены при выходе.',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
 
                       const SizedBox(height: 24),
 
-                      _buildLoginButton(context, theme),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: provider.isSubmitting ? null : _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.colorScheme.primary,
+                            foregroundColor: theme.colorScheme.onPrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: provider.isSubmitting
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  isTeacherMode
+                                      ? S.of(context).authorizeAction
+                                      : S.of(context).register_and_login_action,
+                                ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -171,70 +204,34 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildTextField({
-    required BuildContext context,
     required TextEditingController controller,
     required String labelText,
     required IconData prefixIcon,
     required ThemeData theme,
-    TextInputType? keyboardType,
     bool obscureText = false,
+    TextInputAction? textInputAction,
   }) {
     return TextField(
       controller: controller,
-      keyboardType: keyboardType,
       obscureText: obscureText,
-      onSubmitted: (_) => _onEnterPressed(),
+      textInputAction: textInputAction ?? TextInputAction.next,
+      onSubmitted: (_) => _submit(),
       decoration: InputDecoration(
         labelText: labelText,
         prefixIcon: Icon(prefixIcon, color: theme.colorScheme.primary),
-        border: _buildOutlineBorder(context, theme),
-        enabledBorder: _buildOutlineBorder(context, theme, active: false),
-        focusedBorder: _buildFocusedBorder(context, theme),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+        ),
         filled: true,
         fillColor: theme.colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
-        ),
-      ),
-    );
-  }
-
-  OutlineInputBorder _buildOutlineBorder(
-    BuildContext context,
-    ThemeData theme, {
-    bool active = true,
-  }) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: theme.colorScheme.outline, width: 1.5),
-    );
-  }
-
-  OutlineInputBorder _buildFocusedBorder(
-    BuildContext context,
-    ThemeData theme,
-  ) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-    );
-  }
-
-  Widget _buildLoginButton(BuildContext context, ThemeData theme) {
-    return ElevatedButton(
-      onPressed: _handleLogin,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        elevation: 2,
-      ),
-      child: Text(
-        S.of(context).authorizeAction,
-        style: theme.textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w600,
         ),
       ),
     );

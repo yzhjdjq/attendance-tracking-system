@@ -6,6 +6,13 @@
   "aboutApp": "О приложении",
   "copyright": "© 2026 Nikita Yarovoi",
 
+  "@_AUTH_EXTENSIONS": {},
+  "authorize_error_invalid_credentials": "Неверный логин или пароль",
+  "authorize_error_empty_login": "Введите логин",
+  "authorize_error_empty_password": "Введите пароль",
+  "authorize_error_empty_full_name": "Введите ФИО",
+  "authorize_error_unknown": "Ошибка авторизации",
+
   "@_MAIN_DRAWER": {},
   "menu": "меню",
   "home_page_title": "Главная",
@@ -14,6 +21,12 @@
   "settings_page_title": "Настройки",
 
   "@_LOGIN_PAGE": {},
+  "login_mode_teacher": "Преподаватель",
+  "login_mode_student": "Студент",
+  "login_mode_switch": "Режим входа",
+  "full_name": "ФИО",
+  "enter_full_name_message": "Введите ФИО",
+  "register_and_login_action": "Войти как студент",
   "enter_login_message": "Введите логин",
   "authorize_error_message": "Ошибка авторизации",
   "authorize": "Авторизация",
@@ -70,11 +83,19 @@
   "permission_status_restricted": "ограничено",
   "permission_status_unknown": "неизвестно",
 
+  "@_SETTINGS_PAGE": {},
+  "profile_unknown_name": "Преподаватель",
+
   "@_PERMISSIONS_PAGE": {},
   "permission_page_title": "Разрешения приложения",
   "permission_action_request": "Запросить",
   "permission_action_open": "Открыть",
   "permission_action_requestAll": "Запросить все",
   "permission_action_openSystemSettings": "Настройки ОС",
-  "permission_action_refresh": "Обновить статусы"
+  "permission_action_refresh": "Обновить статусы",
+
+  "@_EDIT_TEACHER_NAME_PAGE": {},
+  "settings_profile_name_saved": "Новое ФИО сохранено",
+  "settings_profile_name_title": "ФИО",
+  "settings_profile_name_save_action": "Сохранить изменения"
 }

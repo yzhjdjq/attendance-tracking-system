@@ -6,4 +6,4 @@ export 'mark_visit_page.dart' show MarkVisitPage;
 
 export 'settings_page.dart' show SettingsPage;
 
-export 'settings/settings.dart' show PermissionsPage;
+export 'settings/settings.dart' show EditTeacherNamePage, PermissionsPage;

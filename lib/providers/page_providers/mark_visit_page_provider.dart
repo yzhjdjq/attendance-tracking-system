@@ -1,25 +1,13 @@
 import 'dart:async' show StreamSubscription;
 
 import 'package:ats/models/models.dart'
-    show DeliveryStatus, Message, MessageType, UserRole, TextPayload;
-import 'package:ats/providers/providers.dart' show BleMeshServiceProvider;
+    show DeliveryStatus, Message, MessageType, TextPayload;
+import 'package:ats/providers/providers.dart'
+    show BleMeshServiceProvider, UserProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show BleMeshService;
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:ats/providers/singleton_provider.dart' show SingletonMixin;
 import 'package:uuid/uuid.dart' show Uuid;
-
-enum UserRoleViewModel {
-  teacher,
-  student;
-
-  static UserRoleViewModel fromUserRole(UserRole role) {
-    if (role == UserRole.teacher) {
-      return UserRoleViewModel.teacher;
-    }
-
-    return UserRoleViewModel.student;
-  }
-}
 
 enum DeliveryStatusViewModel {
   notImplemented,
@@ -43,16 +31,23 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
 
   static Future<MarkVisitPageProvider> initialize({
     required BleMeshServiceProvider bleMeshServiceProvider,
+    required UserProvider userProvider,
   }) async {
     if (SingletonMixin.isInitialized<MarkVisitPageProvider>()) {
       return instance;
     }
 
-    final provider = MarkVisitPageProvider._internal(bleMeshServiceProvider);
+    final provider = MarkVisitPageProvider._internal(
+      bleMeshServiceProvider,
+      userProvider,
+    );
     return provider;
   }
 
-  MarkVisitPageProvider._internal(this._bleMeshServiceProvider) {
+  MarkVisitPageProvider._internal(
+    this._bleMeshServiceProvider,
+    this._userProvider,
+  ) {
     SingletonMixin.registerInstance(this);
     subscribeToMeshServiceState();
     subscribeToReceiveMessage();
@@ -62,11 +57,11 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       SingletonMixin.isInitialized<MarkVisitPageProvider>();
 
   late final BleMeshServiceProvider _bleMeshServiceProvider;
+  late final UserProvider _userProvider;
 
   StreamSubscription<bool>? _meshServiceStateSubscription;
   StreamSubscription<Message>? _messagesSubscription;
 
-  UserRoleViewModel _role = UserRoleViewModel.student;
   List<String> _logMessages = [];
   List<String> _attendedStudents = [];
   String? _errorMessage;
@@ -75,12 +70,12 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   static const _uuid = Uuid();
 
   bool get canStart => _bleMeshServiceProvider.canStart;
-  UserRoleViewModel get role => _role;
+  UserRoleViewModel get role => _userProvider.roleOrStudent;
   List<String> get logMessages => _logMessages;
   List<String> get attendedStudents => _attendedStudents;
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
-  String get userId => _bleMeshServiceProvider.userId ?? '';
+  String get userId => _userProvider.username ?? '';
   Future<int> getDirectConnectionsCount() async =>
       await _bleMeshServiceProvider.getDirectConnectionsCount();
 
@@ -120,11 +115,6 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   }
 
   bool isMeshServiceRunning() => _isMeshServiceState;
-
-  void setRole(UserRoleViewModel role) {
-    _role = role;
-    notifyListeners();
-  }
 
   void setAttendedStudents(List<String> students) {
     _attendedStudents = students;

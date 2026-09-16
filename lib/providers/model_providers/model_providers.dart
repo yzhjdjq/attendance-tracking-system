@@ -1,1 +1,1 @@
-export 'user_provider.dart' show UserProvider;
+export 'user_provider.dart' show UserProvider, UserRoleViewModel;

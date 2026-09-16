@@ -23,6 +23,7 @@ void main() async {
   await LoginPageProvider.initialize(userProvider: UserProvider.instance);
   await MarkVisitPageProvider.initialize(
     bleMeshServiceProvider: BleMeshServiceProvider.instance,
+    userProvider: UserProvider.instance,
   );
   runApp(const MyApp());
 }

@@ -118,6 +118,36 @@ abstract class AppLocalizations {
   /// **'© 2026 Nikita Yarovoi'**
   String get copyright;
 
+  /// No description provided for @authorize_error_invalid_credentials.
+  ///
+  /// In ru, this message translates to:
+  /// **'Неверный логин или пароль'**
+  String get authorize_error_invalid_credentials;
+
+  /// No description provided for @authorize_error_empty_login.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите логин'**
+  String get authorize_error_empty_login;
+
+  /// No description provided for @authorize_error_empty_password.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите пароль'**
+  String get authorize_error_empty_password;
+
+  /// No description provided for @authorize_error_empty_full_name.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите ФИО'**
+  String get authorize_error_empty_full_name;
+
+  /// No description provided for @authorize_error_unknown.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ошибка авторизации'**
+  String get authorize_error_unknown;
+
   /// No description provided for @menu.
   ///
   /// In ru, this message translates to:
@@ -147,6 +177,42 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Настройки'**
   String get settings_page_title;
+
+  /// No description provided for @login_mode_teacher.
+  ///
+  /// In ru, this message translates to:
+  /// **'Преподаватель'**
+  String get login_mode_teacher;
+
+  /// No description provided for @login_mode_student.
+  ///
+  /// In ru, this message translates to:
+  /// **'Студент'**
+  String get login_mode_student;
+
+  /// No description provided for @login_mode_switch.
+  ///
+  /// In ru, this message translates to:
+  /// **'Режим входа'**
+  String get login_mode_switch;
+
+  /// No description provided for @full_name.
+  ///
+  /// In ru, this message translates to:
+  /// **'ФИО'**
+  String get full_name;
+
+  /// No description provided for @enter_full_name_message.
+  ///
+  /// In ru, this message translates to:
+  /// **'Введите ФИО'**
+  String get enter_full_name_message;
+
+  /// No description provided for @register_and_login_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Войти как студент'**
+  String get register_and_login_action;
 
   /// No description provided for @enter_login_message.
   ///
@@ -436,6 +502,12 @@ abstract class AppLocalizations {
   /// **'неизвестно'**
   String get permission_status_unknown;
 
+  /// No description provided for @profile_unknown_name.
+  ///
+  /// In ru, this message translates to:
+  /// **'q'**
+  String get profile_unknown_name;
+
   /// No description provided for @permission_page_title.
   ///
   /// In ru, this message translates to:
@@ -471,6 +543,24 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Обновить статусы'**
   String get permission_action_refresh;
+
+  /// No description provided for @settings_profile_name_saved.
+  ///
+  /// In ru, this message translates to:
+  /// **'Новое ФИО сохранено'**
+  String get settings_profile_name_saved;
+
+  /// No description provided for @settings_profile_name_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'ФИО'**
+  String get settings_profile_name_title;
+
+  /// No description provided for @settings_profile_name_save_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить изменения'**
+  String get settings_profile_name_save_action;
 }
 
 class _AppLocalizationsDelegate

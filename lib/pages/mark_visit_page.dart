@@ -1,6 +1,10 @@
 import 'package:ats/pages/pages.dart' show PermissionsPage;
 import 'package:ats/providers/providers.dart'
-    show DeliveryStatusViewModel, MarkVisitPageProvider, UserRoleViewModel;
+    show
+        DeliveryStatusViewModel,
+        MarkVisitPageProvider,
+        UserRoleViewModel,
+        UserProvider;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/widgets/widgets.dart'
     show
@@ -10,8 +14,7 @@ import 'package:ats/widgets/widgets.dart'
         ErrorCardWidget,
         LogCardWidget,
         MainDrawerWidget,
-        MarkVisitActionButtonWidget,
-        RoleSelectorWidget;
+        MarkVisitActionButtonWidget;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +33,9 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(S.of(context).mark_visit_page_title),
       ),
-      drawer: const MainDrawerWidget(),
+      drawer: MainDrawerWidget(
+        role: context.read<UserProvider>().roleOrStudent,
+      ),
       body: Consumer<MarkVisitPageProvider>(
         builder: (context, provider, child) {
           if (!provider.canStart) {
@@ -119,28 +124,6 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
 
                         const SizedBox(height: 16),
 
-                        // Выбор роли
-                        RoleSelectorWidget(
-                          currentRole: provider.role,
-                          onRoleSelected: (role) {
-                            provider.setRole(role);
-                            provider.addLog(
-                              '${S.of(context).mark_visit_role_selected}: ${role == UserRoleViewModel.teacher ? S.of(context).mark_visit_role_teacher : S.of(context).mark_visit_role_student}',
-                            );
-                            if (role == UserRoleViewModel.teacher) {
-                              provider.addLog(
-                                S.of(context).mark_visit_instruction_poll,
-                              );
-                            } else {
-                              provider.addLog(
-                                S.of(context).mark_visit_instruction_attendance,
-                              );
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: 16),
-
                         // Кнопка действия
                         MarkVisitActionButtonWidget(
                           role: provider.role,
@@ -153,6 +136,7 @@ class _MarkVisitPageState extends State<MarkVisitPage> {
                         if (provider.role == UserRoleViewModel.teacher &&
                             provider.attendedStudents.isNotEmpty)
                           const SizedBox(height: 16),
+
                         if (provider.role == UserRoleViewModel.teacher &&
                             provider.attendedStudents.isNotEmpty)
                           AttendedStudentsCardWidget(

@@ -1,6 +1,8 @@
+import 'package:ats/providers/providers.dart' show UserProvider;
 import 'package:ats/services/services.dart' show BleMeshService, S;
-import 'package:flutter/material.dart';
 import 'package:ats/widgets/widgets.dart' show MainDrawerWidget;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' show ReadContext;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,7 +45,9 @@ class _HomePageState extends State<HomePage> {
         title: Text(S.of(context).home_page_title),
         actions: <Widget>[],
       ),
-      drawer: const MainDrawerWidget(),
+      drawer: MainDrawerWidget(
+        role: context.read<UserProvider>().roleOrStudent,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

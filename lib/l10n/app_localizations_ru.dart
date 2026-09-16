@@ -21,6 +21,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get copyright => '© 2026 Nikita Yarovoi';
 
   @override
+  String get authorize_error_invalid_credentials => 'Неверный логин или пароль';
+
+  @override
+  String get authorize_error_empty_login => 'Введите логин';
+
+  @override
+  String get authorize_error_empty_password => 'Введите пароль';
+
+  @override
+  String get authorize_error_empty_full_name => 'Введите ФИО';
+
+  @override
+  String get authorize_error_unknown => 'Ошибка авторизации';
+
+  @override
   String get menu => 'меню';
 
   @override
@@ -34,6 +49,24 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settings_page_title => 'Настройки';
+
+  @override
+  String get login_mode_teacher => 'Преподаватель';
+
+  @override
+  String get login_mode_student => 'Студент';
+
+  @override
+  String get login_mode_switch => 'Режим входа';
+
+  @override
+  String get full_name => 'ФИО';
+
+  @override
+  String get enter_full_name_message => 'Введите ФИО';
+
+  @override
+  String get register_and_login_action => 'Войти как студент';
 
   @override
   String get enter_login_message => 'Введите логин';
@@ -191,6 +224,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get permission_status_unknown => 'неизвестно';
 
   @override
+  String get profile_unknown_name => 'q';
+
+  @override
   String get permission_page_title => 'Разрешения приложения';
 
   @override
@@ -207,4 +243,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get permission_action_refresh => 'Обновить статусы';
+
+  @override
+  String get settings_profile_name_saved => 'Новое ФИО сохранено';
+
+  @override
+  String get settings_profile_name_title => 'ФИО';
+
+  @override
+  String get settings_profile_name_save_action => 'Сохранить изменения';
 }
