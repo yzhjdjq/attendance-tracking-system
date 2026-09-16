@@ -224,7 +224,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get permission_status_unknown => 'неизвестно';
 
   @override
-  String get profile_unknown_name => 'q';
+  String get profile_unknown_name => 'Преподаватель';
 
   @override
   String get permission_page_title => 'Разрешения приложения';

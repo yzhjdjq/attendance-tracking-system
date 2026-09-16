@@ -505,7 +505,7 @@ abstract class AppLocalizations {
   /// No description provided for @profile_unknown_name.
   ///
   /// In ru, this message translates to:
-  /// **'q'**
+  /// **'Преподаватель'**
   String get profile_unknown_name;
 
   /// No description provided for @permission_page_title.
