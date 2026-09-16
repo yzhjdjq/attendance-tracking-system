@@ -406,6 +406,78 @@ abstract class AppLocalizations {
   /// **'Опрос участников начат (ретрансляция через mesh)'**
   String get mark_visit_poll_started;
 
+  /// No description provided for @attendance_export_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Экспорт отчёта'**
+  String get attendance_export_title;
+
+  /// No description provided for @attendance_export_group_label.
+  ///
+  /// In ru, this message translates to:
+  /// **'Группа'**
+  String get attendance_export_group_label;
+
+  /// No description provided for @attendance_export_subject_label.
+  ///
+  /// In ru, this message translates to:
+  /// **'Предмет'**
+  String get attendance_export_subject_label;
+
+  /// No description provided for @attendance_export_group_required.
+  ///
+  /// In ru, this message translates to:
+  /// **'Укажите группу'**
+  String get attendance_export_group_required;
+
+  /// No description provided for @attendance_export_subject_required.
+  ///
+  /// In ru, this message translates to:
+  /// **'Укажите предмет'**
+  String get attendance_export_subject_required;
+
+  /// No description provided for @attendance_export_date_auto_note.
+  ///
+  /// In ru, this message translates to:
+  /// **'подставлена автоматически'**
+  String get attendance_export_date_auto_note;
+
+  /// No description provided for @attendance_export_copy_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать'**
+  String get attendance_export_copy_action;
+
+  /// No description provided for @attendance_export_save_action.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранить'**
+  String get attendance_export_save_action;
+
+  /// No description provided for @attendance_export_cancel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get attendance_export_cancel;
+
+  /// No description provided for @attendance_export_copied.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отчёт скопирован в буфер обмена'**
+  String get attendance_export_copied;
+
+  /// No description provided for @attendance_export_saved.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отчёт сохранён'**
+  String get attendance_export_saved;
+
+  /// No description provided for @attendance_export_save_failed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось сохранить отчёт'**
+  String get attendance_export_save_failed;
+
   /// No description provided for @permission_bluetoothScan_title.
   ///
   /// In ru, this message translates to:

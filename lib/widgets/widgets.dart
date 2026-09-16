@@ -8,6 +8,8 @@ export 'connections_card_widget.dart' show ConnectionsCardWidget;
 
 export 'error_card_widget.dart' show ErrorCardWidget;
 
+export 'export_attendance_dialog.dart' show ExportAttendanceDialog;
+
 export 'log_card_widget.dart' show LogCardWidget;
 
 export 'main_drawer_widget.dart' show MainDrawerWidget;

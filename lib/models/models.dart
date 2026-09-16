@@ -1,3 +1,5 @@
+export 'attendance_report.dart' show AttendanceReport;
+
 export 'delivery_status.dart' show DeliveryStatus;
 
 export 'message.dart' show Message, MessageType, TextPayload;

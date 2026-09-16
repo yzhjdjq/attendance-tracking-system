@@ -171,6 +171,42 @@ class AppLocalizationsRu extends AppLocalizations {
       'Опрос участников начат (ретрансляция через mesh)';
 
   @override
+  String get attendance_export_title => 'Экспорт отчёта';
+
+  @override
+  String get attendance_export_group_label => 'Группа';
+
+  @override
+  String get attendance_export_subject_label => 'Предмет';
+
+  @override
+  String get attendance_export_group_required => 'Укажите группу';
+
+  @override
+  String get attendance_export_subject_required => 'Укажите предмет';
+
+  @override
+  String get attendance_export_date_auto_note => 'подставлена автоматически';
+
+  @override
+  String get attendance_export_copy_action => 'Скопировать';
+
+  @override
+  String get attendance_export_save_action => 'Сохранить';
+
+  @override
+  String get attendance_export_cancel => 'Отмена';
+
+  @override
+  String get attendance_export_copied => 'Отчёт скопирован в буфер обмена';
+
+  @override
+  String get attendance_export_saved => 'Отчёт сохранён';
+
+  @override
+  String get attendance_export_save_failed => 'Не удалось сохранить отчёт';
+
+  @override
   String get permission_bluetoothScan_title => 'Bluetooth Scan';
 
   @override

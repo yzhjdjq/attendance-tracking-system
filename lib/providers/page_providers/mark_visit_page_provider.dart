@@ -1,7 +1,7 @@
 import 'dart:async' show StreamSubscription;
 
 import 'package:ats/models/models.dart'
-    show DeliveryStatus, Message, MessageType, TextPayload;
+    show DeliveryStatus, Message, MessageType, TextPayload, AttendanceReport;
 import 'package:ats/providers/providers.dart'
     show BleMeshServiceProvider, UserProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show BleMeshService;
@@ -254,6 +254,18 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
       messageType: MessageType.text,
       timestamp: DateTime.now().toUtc(),
       payload: TextPayload(text),
+    );
+  }
+
+  AttendanceReport buildAttendanceReport({
+    required String groupName,
+    required String subject,
+  }) {
+    return AttendanceReport(
+      groupName: groupName,
+      subject: subject,
+      date: DateTime.now(),
+      students: List.unmodifiable(_attendedStudents),
     );
   }
 
