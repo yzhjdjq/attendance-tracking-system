@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ats/providers/providers.dart'
     show UserProvider, UserRoleViewModel;
 import 'package:ats/services/services.dart' show S;
 import 'package:ats/pages/pages.dart'
-    show HomePage, LoginPage, MarkVisitPage, SettingsPage;
+    show HomePage, LoginPage, MarkVisitPage, MeshTopologyPage, SettingsPage;
 
 class MainDrawerWidget extends StatelessWidget {
   final UserRoleViewModel _role;
@@ -33,12 +34,27 @@ class MainDrawerWidget extends StatelessWidget {
             icon: Icons.monitor_heart,
             title: S.of(context).mark_visit_page_title,
             onTap: () {
+              Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const MarkVisitPage()),
               );
             },
           ),
+          if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+            _buildDrawerItem(
+              icon: Icons.hub,
+              title: S.of(context).topology_page_title,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MeshTopologyPage(),
+                  ),
+                );
+              },
+            ),
           _buildDrawerItem(
             icon: Icons.settings,
             title: S.of(context).settings_page_title,
@@ -84,6 +100,9 @@ class _MainDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final roleLabel = _role == UserRoleViewModel.teacher
+        ? S.of(context).mark_visit_role_teacher
+        : S.of(context).mark_visit_role_student;
 
     return Container(
       width: double.infinity,
@@ -116,7 +135,7 @@ class _MainDrawerHeader extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '${S.of(context).mark_visit_role_selected}: ${_role == UserRoleViewModel.teacher ? S.of(context).mark_visit_role_teacher : S.of(context).mark_visit_role_student}',
+              '${S.of(context).mark_visit_role_selected}: $roleLabel',
               style: TextStyle(
                 color: theme.colorScheme.onSurface,
                 fontSize: 14,

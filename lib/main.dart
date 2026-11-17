@@ -3,8 +3,9 @@ import 'package:ats/providers/providers.dart'
         LoginPageProvider,
         MarkVisitPageProvider,
         PermissionsProvider,
-        UserProvider;
-import 'package:ats/providers/service_providers/ble_mesh_service_provider.dart';
+        UserProvider,
+        MeshGraphPageProvider,
+        BleMeshServiceProvider;
 import 'package:ats/services/services.dart' show S, StorageService;
 import 'package:ats/widgets/widgets.dart' show AuthCheckerWidget;
 import 'package:flutter/material.dart';
@@ -25,6 +26,9 @@ void main() async {
     bleMeshServiceProvider: BleMeshServiceProvider.instance,
     userProvider: UserProvider.instance,
   );
+  await MeshGraphPageProvider.initialize(
+    bleMeshServiceProvider: BleMeshServiceProvider.instance,
+  );
   runApp(const MyApp());
 }
 
@@ -42,6 +46,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LoginPageProvider.instance),
         ChangeNotifierProvider(
           create: (context) => MarkVisitPageProvider.instance,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MeshGraphPageProvider.instance,
         ),
       ],
       child: MaterialApp(

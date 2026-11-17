@@ -16,4 +16,9 @@ export 'main_drawer_widget.dart' show MainDrawerWidget;
 
 export 'mark_visit_action_button_widget.dart' show MarkVisitActionButtonWidget;
 
+export 'mesh_graph_canvas.dart'
+    show MeshGraphCanvas, MeshGraphCanvasState, GraphColors;
+
+export 'mesh_graph_info_bar.dart' show MeshGraphInfoBar;
+
 export 'role_selector_widget.dart' show RoleSelectorWidget;

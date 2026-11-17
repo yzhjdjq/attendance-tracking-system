@@ -289,4 +289,105 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settings_profile_name_save_action => 'Сохранить изменения';
+
+  @override
+  String get topology_page_title => 'Топология ЛВС';
+
+  @override
+  String get topology_empty_title => 'Сеть пуста';
+
+  @override
+  String get topology_empty_message =>
+      'Нет активных BLE-подключений. Убедитесь, что Bluetooth включён и рядом есть другие устройства.';
+
+  @override
+  String get topology_nodes => 'Узлов';
+
+  @override
+  String get topology_edges => 'Рёбер';
+
+  @override
+  String get topology_updated => 'Обновлено';
+
+  @override
+  String get topology_updated_just_now => 'только что';
+
+  @override
+  String get topology_updated_seconds_ago => 'с назад';
+
+  @override
+  String get topology_updated_minutes_ago => 'мин назад';
+
+  @override
+  String get topology_pause => 'Пауза';
+
+  @override
+  String get topology_resume => 'Продолжить';
+
+  @override
+  String get topology_reset_zoom => 'Сбросить масштаб';
+
+  @override
+  String get topology_legend_title => 'Легенда';
+
+  @override
+  String get topology_legend_self => 'Это устройство';
+
+  @override
+  String get topology_legend_neighbor => 'Прямой сосед';
+
+  @override
+  String get topology_legend_remote => 'Удалённый узел';
+
+  @override
+  String get topology_legend_weight_strong => 'Сильный сигнал';
+
+  @override
+  String get topology_legend_weight_medium => 'Средний сигнал';
+
+  @override
+  String get topology_legend_weight_weak => 'Слабый сигнал';
+
+  @override
+  String get topology_legend_weight_unknown => 'Неизвестно';
+
+  @override
+  String get topology_node_details => 'Узел';
+
+  @override
+  String get topology_node_layer => 'Слой';
+
+  @override
+  String get topology_layer_unreachable => 'недостижим';
+
+  @override
+  String get topology_node_peer_id => 'Peer ID';
+
+  @override
+  String get topology_node_connections => 'Связи';
+
+  @override
+  String get topology_node_no_connections => 'Нет связей';
+
+  @override
+  String get topology_edge_weight => 'Вес';
+
+  @override
+  String get topology_edge_weight_a_to_b => 'A → B';
+
+  @override
+  String get topology_edge_weight_b_to_a => 'B → A';
+
+  @override
+  String get topology_copy_peer_id => 'Копировать Peer ID';
+
+  @override
+  String get topology_peer_id_copied => 'Peer ID скопирован';
+
+  @override
+  String get topology_available_android_only =>
+      'Топология доступна только на Android';
+
+  @override
+  String get topology_you => 'Вы';
 }

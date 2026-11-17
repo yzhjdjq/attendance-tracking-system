@@ -633,6 +633,204 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Сохранить изменения'**
   String get settings_profile_name_save_action;
+
+  /// No description provided for @topology_page_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Топология ЛВС'**
+  String get topology_page_title;
+
+  /// No description provided for @topology_empty_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сеть пуста'**
+  String get topology_empty_title;
+
+  /// No description provided for @topology_empty_message.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет активных BLE-подключений. Убедитесь, что Bluetooth включён и рядом есть другие устройства.'**
+  String get topology_empty_message;
+
+  /// No description provided for @topology_nodes.
+  ///
+  /// In ru, this message translates to:
+  /// **'Узлов'**
+  String get topology_nodes;
+
+  /// No description provided for @topology_edges.
+  ///
+  /// In ru, this message translates to:
+  /// **'Рёбер'**
+  String get topology_edges;
+
+  /// No description provided for @topology_updated.
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновлено'**
+  String get topology_updated;
+
+  /// No description provided for @topology_updated_just_now.
+  ///
+  /// In ru, this message translates to:
+  /// **'только что'**
+  String get topology_updated_just_now;
+
+  /// No description provided for @topology_updated_seconds_ago.
+  ///
+  /// In ru, this message translates to:
+  /// **'с назад'**
+  String get topology_updated_seconds_ago;
+
+  /// No description provided for @topology_updated_minutes_ago.
+  ///
+  /// In ru, this message translates to:
+  /// **'мин назад'**
+  String get topology_updated_minutes_ago;
+
+  /// No description provided for @topology_pause.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пауза'**
+  String get topology_pause;
+
+  /// No description provided for @topology_resume.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжить'**
+  String get topology_resume;
+
+  /// No description provided for @topology_reset_zoom.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сбросить масштаб'**
+  String get topology_reset_zoom;
+
+  /// No description provided for @topology_legend_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Легенда'**
+  String get topology_legend_title;
+
+  /// No description provided for @topology_legend_self.
+  ///
+  /// In ru, this message translates to:
+  /// **'Это устройство'**
+  String get topology_legend_self;
+
+  /// No description provided for @topology_legend_neighbor.
+  ///
+  /// In ru, this message translates to:
+  /// **'Прямой сосед'**
+  String get topology_legend_neighbor;
+
+  /// No description provided for @topology_legend_remote.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалённый узел'**
+  String get topology_legend_remote;
+
+  /// No description provided for @topology_legend_weight_strong.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сильный сигнал'**
+  String get topology_legend_weight_strong;
+
+  /// No description provided for @topology_legend_weight_medium.
+  ///
+  /// In ru, this message translates to:
+  /// **'Средний сигнал'**
+  String get topology_legend_weight_medium;
+
+  /// No description provided for @topology_legend_weight_weak.
+  ///
+  /// In ru, this message translates to:
+  /// **'Слабый сигнал'**
+  String get topology_legend_weight_weak;
+
+  /// No description provided for @topology_legend_weight_unknown.
+  ///
+  /// In ru, this message translates to:
+  /// **'Неизвестно'**
+  String get topology_legend_weight_unknown;
+
+  /// No description provided for @topology_node_details.
+  ///
+  /// In ru, this message translates to:
+  /// **'Узел'**
+  String get topology_node_details;
+
+  /// No description provided for @topology_node_layer.
+  ///
+  /// In ru, this message translates to:
+  /// **'Слой'**
+  String get topology_node_layer;
+
+  /// No description provided for @topology_layer_unreachable.
+  ///
+  /// In ru, this message translates to:
+  /// **'недостижим'**
+  String get topology_layer_unreachable;
+
+  /// No description provided for @topology_node_peer_id.
+  ///
+  /// In ru, this message translates to:
+  /// **'Peer ID'**
+  String get topology_node_peer_id;
+
+  /// No description provided for @topology_node_connections.
+  ///
+  /// In ru, this message translates to:
+  /// **'Связи'**
+  String get topology_node_connections;
+
+  /// No description provided for @topology_node_no_connections.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет связей'**
+  String get topology_node_no_connections;
+
+  /// No description provided for @topology_edge_weight.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вес'**
+  String get topology_edge_weight;
+
+  /// No description provided for @topology_edge_weight_a_to_b.
+  ///
+  /// In ru, this message translates to:
+  /// **'A → B'**
+  String get topology_edge_weight_a_to_b;
+
+  /// No description provided for @topology_edge_weight_b_to_a.
+  ///
+  /// In ru, this message translates to:
+  /// **'B → A'**
+  String get topology_edge_weight_b_to_a;
+
+  /// No description provided for @topology_copy_peer_id.
+  ///
+  /// In ru, this message translates to:
+  /// **'Копировать Peer ID'**
+  String get topology_copy_peer_id;
+
+  /// No description provided for @topology_peer_id_copied.
+  ///
+  /// In ru, this message translates to:
+  /// **'Peer ID скопирован'**
+  String get topology_peer_id_copied;
+
+  /// No description provided for @topology_available_android_only.
+  ///
+  /// In ru, this message translates to:
+  /// **'Топология доступна только на Android'**
+  String get topology_available_android_only;
+
+  /// No description provided for @topology_you.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы'**
+  String get topology_you;
 }
 
 class _AppLocalizationsDelegate

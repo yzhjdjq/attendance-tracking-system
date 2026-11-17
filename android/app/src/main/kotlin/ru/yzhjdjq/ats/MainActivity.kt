@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity() {
     private const val CHANNEL_EVENT_RECEIVE_MESSAGE = "ru.yzhjdjq.ats.platform_events/receive_message"
     private const val CHANNEL_EVENT_SERVICE_STATE = "ru.yzhjdjq.ats.platform_events/service_state"
     private const val CHANNEL_EVENT_NEIGHBORING_MEMBERS = "ru.yzhjdjq.ats.platform_events/neighboring_members"
+    private const val CHANNEL_EVENT_GRAPH = "ru.yzhjdjq.ats.platform_events/graph"
   }
 
   private val bridgeScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -44,6 +45,14 @@ class MainActivity : FlutterActivity() {
     ChannelBridge(
       scope = bridgeScope,
       flow = mesh.neighboringNetworkMembersFlow(),
+    )
+  }
+
+  private val graphBridge by lazy {
+    ChannelBridge(
+      scope = bridgeScope,
+      flow = mesh.graphFlow(),
+      initialValue = { mesh.getGraphSnapshot() },
     )
   }
 
@@ -78,6 +87,8 @@ class MainActivity : FlutterActivity() {
         when (call.method) {
           "getNumberOfNeighboringNetworkMembers" ->
             result.success(mesh.getNumberOfNeighboringNetworkMembers())
+
+          "getGraphSnapshot" -> result.success(mesh.getGraphSnapshot())
 
           "sendMessage" -> {
             @Suppress("UNCHECKED_CAST")
@@ -123,6 +134,16 @@ class MainActivity : FlutterActivity() {
 
         override fun onCancel(arguments: Any?) {
           neighboringMembersBridge.detach()
+        }
+      })
+
+    EventChannel(messenger, CHANNEL_EVENT_GRAPH)
+      .setStreamHandler(object : EventChannel.StreamHandler {
+        override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+          graphBridge.attach(events)
+        }
+        override fun onCancel(arguments: Any?) {
+          graphBridge.detach()
         }
       })
   }

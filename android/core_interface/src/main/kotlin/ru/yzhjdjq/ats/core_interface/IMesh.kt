@@ -59,6 +59,16 @@ interface IMesh {
    * @param message Dart-DTO сообщения.
    */
   fun sendMessage(message: Map<String, Any?>): DeliveryStatus
+
+  /**
+   * Возвращает поток графа сети.
+   */
+  fun graphFlow(): Flow<Map<String, Any?>>
+
+  /**
+   * Возвращает граф сети.
+   */
+  fun getGraphSnapshot(): Map<String, Any?>?
 }
 
 /**
@@ -85,6 +95,10 @@ class StubMesh : IMesh {
 
   override fun sendMessage(message: Map<String, Any?>): DeliveryStatus =
     DeliveryStatus.NOT_IMPLEMENTED
+
+  override fun graphFlow(): Flow<Map<String, Any?>> = flowOf()
+
+  override fun getGraphSnapshot(): Map<String, Any?>? = null
 }
 
 object MeshFactory {

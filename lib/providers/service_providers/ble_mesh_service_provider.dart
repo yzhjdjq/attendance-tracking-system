@@ -1,6 +1,6 @@
 import 'dart:async' show StreamController, StreamSubscription;
 
-import 'package:ats/models/models.dart' show DeliveryStatus, Message;
+import 'package:ats/models/models.dart' show DeliveryStatus, Message, MeshGraph;
 import 'package:ats/providers/providers.dart'
     show PermissionsProvider, SingletonMixin;
 import 'package:ats/services/ble_mesh_service.dart';
@@ -56,6 +56,9 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   final StreamController<int> _neighboringMembers =
       StreamController<int>.broadcast();
   StreamSubscription<int>? _neighboringMembersSubscription;
+  final StreamController<MeshGraph> _graph =
+      StreamController<MeshGraph>.broadcast();
+  StreamSubscription<MeshGraph>? _graphSubscription;
 
   void _enableEventSubscriptions() {
     _messagesSubscription?.cancel();
@@ -70,6 +73,11 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
         .listen((count) {
           _neighboringMembers.add(count);
         });
+
+    _graphSubscription?.cancel();
+    _graphSubscription = BleMeshService.graphEvents.listen((graph) {
+      _graph.add(graph);
+    });
   }
 
   void _disableEventSubscriptions() {
@@ -78,6 +86,9 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
 
     _neighboringMembersSubscription?.cancel();
     _neighboringMembersSubscription = null;
+
+    _graphSubscription?.cancel();
+    _graphSubscription = null;
   }
 
   void _onPermissionsChanged() {
@@ -96,9 +107,13 @@ class BleMeshServiceProvider with ChangeNotifier, SingletonMixin {
   Stream<bool> get serviceState => _isServiceState.stream;
   Stream<Message> get messages => _messages.stream;
   Stream<int> get neighboringMembers => _neighboringMembers.stream;
+  Stream<MeshGraph> get graph => _graph.stream;
 
   Future<bool> get isMeshServiceRunning async =>
       await BleMeshService.isMeshForegroundServiceRunning();
+
+  Future<MeshGraph?> getGraphSnapshot() async =>
+      await BleMeshService.getGraphSnapshot();
 
   void setUserId(String? userId) {
     _userId = userId;

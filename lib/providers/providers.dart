@@ -8,7 +8,8 @@ export 'page_providers/page_providers.dart'
         DeliveryStatusViewModel,
         LoginPageProvider,
         LoginMode,
-        MarkVisitPageProvider;
+        MarkVisitPageProvider,
+        MeshGraphPageProvider;
 
 export 'service_providers/service_providers.dart'
     show

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart'
     show MethodChannel, PlatformException, MissingPluginException, EventChannel;
 
-import 'package:ats/models/models.dart' show DeliveryStatus, Message;
+import 'package:ats/models/models.dart' show DeliveryStatus, MeshGraph, Message;
 
 class BleMeshService {
   static const platformMethods = MethodChannel(
@@ -21,9 +21,13 @@ class BleMeshService {
   static const EventChannel _eventChannelNeighboringMembers = EventChannel(
     'ru.yzhjdjq.ats.platform_events/neighboring_members',
   );
+  static const EventChannel _eventChannelGraph = EventChannel(
+    'ru.yzhjdjq.ats.platform_events/graph',
+  );
   static Stream<Message>? _eventReceivedMessageStream;
   static Stream<bool>? _eventServiceStateStream;
   static Stream<int>? _eventNeighboringMembersStream;
+  static Stream<MeshGraph>? _eventGraphStream;
 
   static Stream<Message> get receiveMessageEvents {
     return _eventReceivedMessageStream ??=
@@ -47,6 +51,14 @@ class BleMeshService {
           _eventChannelNeighboringMembers,
           'neighboring members count',
         );
+  }
+
+  static Stream<MeshGraph> get graphEvents {
+    return _eventGraphStream ??=
+        _InvokePlatformMethods._receiveBroadcastStream<Map<dynamic, dynamic>>(
+          _eventChannelGraph,
+          'mesh graph',
+        ).map((raw) => MeshGraph.fromMap(Map<String, dynamic>.from(raw)));
   }
 
   static Future<bool> isImplemented() async {
@@ -89,6 +101,15 @@ class BleMeshService {
           onDefaultErrorResult: () => 0,
         ) ??
         0;
+  }
+
+  static Future<MeshGraph?> getGraphSnapshot() async {
+    final raw = await _InvokePlatformMethods._invokeMethod<Map<dynamic, dynamic>>(
+      platformMethods,
+      'getGraphSnapshot',
+    );
+    if (raw == null) return null;
+    return MeshGraph.fromMap(Map<String, dynamic>.from(raw));
   }
 
   static Future<DeliveryStatus> sendMessage(Message message) async {
