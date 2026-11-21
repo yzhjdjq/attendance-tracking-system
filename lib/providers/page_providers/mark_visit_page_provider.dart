@@ -78,7 +78,7 @@ class MarkVisitPageProvider with ChangeNotifier, SingletonMixin {
   List<String> get attendedStudents => _attendedStudents.values.toList();
   String? get errorMessage => _errorMessage;
   bool get autoScrollLog => _autoScrollLog;
-  String get userId => _userProvider.username ?? '';
+  String get userId => _userProvider.id;
   int get neighboringMembersCount => _neighboringMembersCount;
 
   void subscribeToMeshServiceState() {

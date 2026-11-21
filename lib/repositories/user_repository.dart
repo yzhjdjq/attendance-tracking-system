@@ -4,13 +4,7 @@ import 'package:ats/services/services.dart' show StorageService;
 class UserRepository {
   static const String _key = 'user';
 
-  Future<User> load({
-    User defaultValue = const User(
-      isAuthenticated: false,
-      username: null,
-      accessToken: null,
-    ),
-  }) async {
+  Future<User> load({User defaultValue = const User.empty()}) async {
     if (!StorageService.containsKey(_key)) {
       await StorageService.setObject(_key, defaultValue);
     }

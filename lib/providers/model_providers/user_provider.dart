@@ -52,12 +52,12 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   final UserRepository _userRepo = UserRepository();
   final AuthService _authService = const AuthService();
 
-  static User _user = const User(isAuthenticated: false);
+  static User _user = const User.empty();
 
   Future<void> _loadDataFromRepository() async {
     _user = await _userRepo.load(defaultValue: _user);
     _bleMeshServiceProvider.setUserId(
-      _user.isAuthenticated ? _user.username : null,
+      _user.isAuthenticated ? (_user.id.isNotEmpty ? _user.id : null) : null,
     );
     notifyListeners();
   }
@@ -65,11 +65,12 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   void _saveDataToRepository() async {
     await _userRepo.save(_user);
     _bleMeshServiceProvider.setUserId(
-      _user.isAuthenticated ? _user.username : null,
+      _user.isAuthenticated ? (_user.id.isNotEmpty ? _user.id : null) : null,
     );
     notifyListeners();
   }
 
+  String get id => _user.id;
   bool get isAuthenticated => _user.isAuthenticated;
   String? get username => _user.username;
   String? get fullName => _user.fullName;
@@ -109,11 +110,11 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   Future<AuthFailureReason?> _applyAuthResult(AuthResult result) async {
     switch (result) {
       case AuthSuccess(:final user):
-        final savedUser = await _userRepo.load(defaultValue: const User());
+        final savedUser = await _userRepo.load(defaultValue: user);
         final mergedUser =
             user.role == UserRole.teacher &&
                 savedUser.username == user.username &&
-                (savedUser.fullName?.trim().isNotEmpty ?? false)
+                savedUser.fullName.isNotEmpty
             ? user.copyWith(fullName: savedUser.fullName)
             : user;
 
@@ -126,12 +127,7 @@ class UserProvider with ChangeNotifier, SingletonMixin {
   }
 
   Future<void> logout() async {
-    _user = const User(
-      isAuthenticated: false,
-      username: null,
-      accessToken: null,
-      role: null,
-    );
+    _user = const User.empty();
     _saveDataToRepository();
   }
 }
